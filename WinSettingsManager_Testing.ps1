@@ -1,5 +1,5 @@
 Set-ExecutionPolicy Bypass -Scope Process -Force;[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
-
+#Get-TimeZone -ListAvailable | Select-Object{$_.id,$_.DisplayName}
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
