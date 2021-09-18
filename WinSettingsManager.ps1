@@ -1,4 +1,6 @@
-﻿[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+﻿Set-ExecutionPolicy Bypass -Scope Process -Force;[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+
+[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
 Add-Type -AssemblyName System.Windows.Forms
@@ -93,6 +95,8 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
                 <ComboBoxItem Content="OpenVPNTechnologies"/>
                 <ComboBoxItem Content="WireGuard"/>
                 <ComboBoxItem Content="Hamachi"/>
+                <ComboBoxItem Content="FortiClient VPN"/>
+                <ComboBoxItem Content="Global VPN Client"/>
             </ComboBox>
             <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select System Package "/>
@@ -251,10 +255,9 @@ $passMgrPackage = $null
 $vpnAppPacakge = $null
 $sysAppPackage = $null
 
-Set-ExecutionPolicy Bypass -Scope Process -Force;
-
-$orig = [Net.ServicePointManager]::SecurityProtocol
-write-host $orig -ForegroundColor Yellow
+#Set-ExecutionPolicy Bypass -Scope Process -Force;
+##$orig = [Net.ServicePointManager]::SecurityProtocol
+#write-host $orig -ForegroundColor Yellow
 
 Function RequireAdmin {
     If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
@@ -336,20 +339,22 @@ xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                             Write-Host "~~~~~~~~~~~ $item ~~~~~~~~~~~"
                             #
                             Import-Certificate -FilePath "$item" -CertStoreLocation "Cert:\LocalMachine\Root" -Verbose
+                            
                         }
+                        [System.Windows.MessageBox]::Show("Import Finished", 'Info', 'OK', 'Information')
                     } 
                     else {
                         Write-Host 'No Certificates found in the selected directory arrays' -ForegroundColor Yellow
                     }
                 }
                 else {
-                    Write-Host "SELECT DIRECTORY" -ForegroundColor "RED"
+                    [System.Windows.MessageBox]::Show("Select Directory", 'Info', 'OK', 'Information')
                 }
             }
             catch {
                 [System.Windows.MessageBox]::Show("IMPORT ERROR:  $_", 'Error', 'OK', 'Error')
             }
-            Write-Host "Finished" -ForegroundColor Magenta
+            
         })
         
     $Form.ShowDialog() | out-null
@@ -1058,7 +1063,7 @@ $btnSystemSettings.Add_Click( {
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
-            $packageMgr = "Winget" 
+            $packageMgr = "Winget"
             $checkWinget = (Invoke-Expression "winget -v")
             if (-not($checkWinget)) {
         
@@ -1081,6 +1086,7 @@ $cbxPackageManager.Add_SelectionChanged( {
                 
                 Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
             }      
+
         }
         if ($cbxPackageManager.SelectedIndex -eq 2) {
             $packageMgr = "Choco"
@@ -1096,9 +1102,8 @@ $cbxPackageManager.Add_SelectionChanged( {
         }
         $global:packageMgr = $packageMgr
     })
-
-$btnSetSeting.Add_Click( {
-        
+#EMpty Setting For NOW
+$btnSetSeting.Add_Click( {      
     })
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
@@ -1422,15 +1427,15 @@ $btnChatInstall.Add_Click( {
 $btnTextEditorInstall.Add_Click( {
         if ($cbxEditorApps.Text -eq "Notepad++") {
 
-            $textEditorPackage = "Notepad++.Notepad++"
-        }
-        if ($cbxEditorApps.Text -eq "Atom") {
+                $textEditorPackage = "Notepad++.Notepad++"
+            }
+            if ($cbxEditorApps.Text -eq "Atom") {
 
-            $textEditorPackage = "GitHub.Atom"
-        }
-        if ($cbxEditorApps.Text -eq "Microsoft Office") {
+                $textEditorPackage = "GitHub.Atom"
+            }
+            if ($cbxEditorApps.Text -eq "Microsoft Office") {
 
-            $textEditorPackage = "Microsoft.Office"
+                $textEditorPackage = "Microsoft.Office"
         }
         if ($textEditorPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
@@ -1683,6 +1688,14 @@ $btnVpnInstall.Add_Click( {
         if ($cbxVPN.Text -eq "Hamachi") {
 
             $vpnAppPacakge = "LogMeIn.Hamachi"
+        }
+        if ($cbxVPN.Text -eq "FortiClient VPN") {
+
+            $vpnAppPacakge = "Fortinet.FortiClientVPN"
+        }
+        if ($cbxVPN.Text -eq "Global VPN Client") {
+
+            $vpnAppPacakge = "SonicWALL.GlobalVPN"
         }
         if ($vpnAppPacakge -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
