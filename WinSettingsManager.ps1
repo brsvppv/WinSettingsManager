@@ -248,7 +248,7 @@ $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 $global:PackageArray = $null
 $global:packageMgr = $null
-$MainForm.Topmost = $True
+#$MainForm.Topmost = $True
 $sysAppPackage = $null
 $InstNotification = "Installing" + $sysAppPackage.PackageName
 
