@@ -1,5 +1,10 @@
-﻿Set-ExecutionPolicy Bypass -Scope Process -Force;[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+Set-ExecutionPolicy Bypass -Scope Process -Force;[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
+    exit;
+}
 
+#Get-TimeZone -ListAvailable | Select-Object{$_.id,$_.DisplayName}
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
@@ -28,9 +33,9 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             </ComboBox>
             <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select PDF Reader"/>
-                <ComboBoxItem Content="AdobeAcrobatReaderDC"/>
-                <ComboBoxItem Content="SumatraPDF"/>
-                <ComboBoxItem Content="FoxitReader"/>
+                <ComboBoxItem Content="Adobe Acrobat"/>
+                <ComboBoxItem Content="Sumatra PDF"/>
+                <ComboBoxItem Content="Foxit Reader"/>
             </ComboBox>
             <ComboBox Name="cbxChatApps" HorizontalAlignment="Left" Margin="20,119,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select Chat App"/>
@@ -63,6 +68,8 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
                 <ComboBoxItem Content="WinMerge"/>
                 <ComboBoxItem Content="Git"/>
                 <ComboBoxItem Content="GitCredManager"/>
+                <ComboBoxItem Content="Docker Desktop"/>
+                
             </ComboBox>
             <ComboBox Name="cbxArchiveApps" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select Archive App"/>
@@ -94,14 +101,12 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
                 <ComboBoxItem Content="Select VPN"/>
                 <ComboBoxItem Content="OpenVPNTechnologies"/>
                 <ComboBoxItem Content="WireGuard"/>
-                <ComboBoxItem Content="Hamachi"/>
-                <ComboBoxItem Content="FortiClient VPN"/>
-                <ComboBoxItem Content="Global VPN Client"/>
+                <ComboBoxItem Content="FortiClient VPN"/> 
             </ComboBox>
             <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select System Package "/>
-                <ComboBoxItem Content="Lenovo SystemUpdate"/>
-                <ComboBoxItem Content="WindowsTerminal"/>
+                <ComboBoxItem Content="Lenovo System Update"/>
+                <ComboBoxItem Content="Windows Terminal"/>
                 <ComboBoxItem Content="Intel Driver Assistant"/>
     
             </ComboBox>
@@ -227,10 +232,10 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
 "@
 #Read XAML
 $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
-try { $Form = [Windows.Markup.XamlReader]::Load( $reader ) }
+try { $MainForm = [Windows.Markup.XamlReader]::Load( $reader ) }
 catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
 # Store Form Objects In PowerShell
-$xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) }
+$xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $MainForm.FindName($_.Name) }
 
 $timer = New-Object System.Windows.Forms.Timer
 
@@ -241,19 +246,11 @@ $timer_Tick = {
 $timer.Enabled = $True
 $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
+$global:PackageArray = $null
 $global:packageMgr = $null
-$browserPackage = $null
-$pdfAppPackage = $null
-$chatAppPackage = $null
-$textEditorPackage = $null
-$imageViwerPackage = $null
-$devToolsPackage = $null
-$archiveAppPackage = $null
-$ftpAppPackage = $null
-$videoAppPackage = $null
-$passMgrPackage = $null
-$vpnAppPacakge = $null
+$MainForm.Topmost = $True
 $sysAppPackage = $null
+$InstNotification = "Installing" + $sysAppPackage.PackageName
 
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
@@ -1009,6 +1006,7 @@ function installMSIPackage {
 ########################### BUTTONS####################
 
 $btnSystemSettings.Add_Click( {
+#$MainForm.Hide()
         [xml]$XAML = @"
 <Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -1048,22 +1046,73 @@ $btnSystemSettings.Add_Click( {
 "@
         #Read XAML
         $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
-        try { $Form = [Windows.Markup.XamlReader]::Load( $reader ) }
+        try { $Settings = [Windows.Markup.XamlReader]::Load( $reader ) }
         catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
         # Store Form Objects In PowerShell
-        $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) }
+        $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Settings.FindName($_.Name) }
     
-        $btnPerfAction13.Add_CLick( {
-                [System.Windows.MessageBox]::Show("Select Action", 'Info', 'OK', 'Information')
+        $btnPerfAction13.Add_Click( {
+           
 
             })
-        $Form.ShowDialog() | out-null
-   
+        $Settings.ShowDialog() | out-null
+        #$Settings.Add_Closing({ })
     })
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             $packageMgr = "Winget"
+            $PackageArray =      @(
+                [pscustomobject]@{PackageName="Google.Chrome"}
+                [pscustomobject]@{PackageName="Opera.Opera"}
+                [pscustomobject]@{PackageName="Mozilla.Firefox"}
+                [pscustomobject]@{PackageName="Adobe.AdobeAcrobatReaderDC"}
+                [pscustomobject]@{PackageName="SumatraPDF.SumatraPDF"}
+                [pscustomobject]@{PackageName="Foxit.FoxitReader"}
+                [pscustomobject]@{PackageName="Microsoft.Teams"}
+                [pscustomobject]@{PackageName="Microsoft.Skype"}
+                [pscustomobject]@{PackageName="Zoom.Zoom"}
+                [pscustomobject]@{PackageName="Telegram.TelegramDesktop"}
+                [pscustomobject]@{PackageName="OpenWhisperSystems.Signal"}
+                [pscustomobject]@{PackageName="Viber.Viber"}
+                [pscustomobject]@{PackageName="Notepad++.Notepad++"}
+                [pscustomobject]@{PackageName="GitHub.Atom"}
+                [pscustomobject]@{PackageName="Microsoft.Office"}
+                [pscustomobject]@{PackageName="IrfanSkiljan.IrfanView"}
+                [pscustomobject]@{PackageName="GIMP.GIMP"}
+                [pscustomobject]@{PackageName="ShareX.ShareX"}
+                [pscustomobject]@{PackageName="Microsoft.VisualStudioCode"}
+                [pscustomobject]@{PackageName="JetBrains.PyCharm.Community"}
+                [pscustomobject]@{PackageName="Microsoft.VisualStudio.2019.Enterprise"}
+                [pscustomobject]@{PackageName="Microsoft.AzureDataStudio"}
+                [pscustomobject]@{PackageName="Microsoft.SQLServerManagementStudio"}
+                [pscustomobject]@{PackageName="WinMerge.WinMerge"}
+                [pscustomobject]@{PackageName="Git.Git"}
+                [pscustomobject]@{PackageName="Microsoft.GitCredentialManagerCore"}
+                [pscustomobject]@{PackageName="Docker.DockerDesktop"}
+                [pscustomobject]@{PackageName="7zip.7zip"}
+                [pscustomobject]@{PackageName="Bandisoft.Bandizip"}
+                [pscustomobject]@{PackageName="Giorgiotani.Peazip"}
+                [pscustomobject]@{PackageName="TimKosse.FileZillaClient"}
+                [pscustomobject]@{PackageName="WinSCP.WinSCP"}
+                [pscustomobject]@{PackageName="Iterate.Cyberduck"}
+                [pscustomobject]@{PackageName="VideoLAN.VLC"}
+                [pscustomobject]@{PackageName="VentisMedia.MediaMonkey"}
+                [pscustomobject]@{PackageName="MPC-HC.MPC-HC"}
+                [pscustomobject]@{PackageName="KeePassXCTeam.KeePassXC"}
+                [pscustomobject]@{PackageName="KeeWeb.KeeWeb"}
+                [pscustomobject]@{PackageName="LogMeIn.LastPass"}
+                [pscustomobject]@{PackageName="Bitwarden.Bitwarden"}
+                [pscustomobject]@{PackageName="AgileBits.1Password"}
+                [pscustomobject]@{PackageName="OpenVPNTechnologies.OpenVPN"}
+                [pscustomobject]@{PackageName="WireGuard.WireGuard"}
+                [pscustomobject]@{PackageName="LogMeIn.Hamachi"}
+                [pscustomobject]@{PackageName="Fortinet.FortiClientVPN"}
+                [pscustomobject]@{PackageName="SonicWALL.GlobalVPN"}
+                [pscustomobject]@{PackageName="Lenovo.SystemUpdate"}
+                [pscustomobject]@{PackageName="Microsoft.WindowsTerminal"}
+                [pscustomobject]@{PackageName="Intel.IntelDriverAndSupportAssistant"}  
+                )
             $checkWinget = (Invoke-Expression "winget -v")
             if (-not($checkWinget)) {
         
@@ -1083,13 +1132,65 @@ $cbxPackageManager.Add_SelectionChanged( {
                 }
             }
             else {      
-                
                 Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
-            }      
+            }    
+             #itemm missing pakcages from Choco
+             $cbxVPN.Items.Add('Hamachi')
+             $cbxVPN.Items.Add('Global VPN Client')  
 
         }
         if ($cbxPackageManager.SelectedIndex -eq 2) {
             $packageMgr = "Choco"
+            $PackageArray = @(
+                [pscustomobject]@{PackageName = "googlechrome" };
+                [pscustomobject]@{PackageName = "opera" };
+                [pscustomobject]@{PackageName = "firefox" };
+                [pscustomobject]@{PackageName = "adobereader" };
+                [pscustomobject]@{PackageName = "sumatrapdf" };
+                [pscustomobject]@{PackageName = "foxitreader" };
+                [pscustomobject]@{PackageName = "microsoft-teams" };
+                [pscustomobject]@{PackageName = "skype" };
+                [pscustomobject]@{PackageName = "zoom" };
+                [pscustomobject]@{PackageName = "telegram" };
+                [pscustomobject]@{PackageName = "signal" };
+                [pscustomobject]@{PackageName = "viber" };
+                [pscustomobject]@{PackageName = "notepadplusplus" };
+                [pscustomobject]@{PackageName = "atom" };
+                [pscustomobject]@{PackageName = "office365business" };
+                [pscustomobject]@{PackageName = "irfanview" };
+                [pscustomobject]@{PackageName = "gimp" };
+                [pscustomobject]@{PackageName = "sharex" };
+                [pscustomobject]@{PackageName = "pycharm-community" };
+                [pscustomobject]@{PackageName = "vscode" };
+                [pscustomobject]@{PackageName = "visualstudio2019enterprise" };
+                [pscustomobject]@{PackageName = "azure-data-studio" };
+                [pscustomobject]@{PackageName = "sql-server-management-studio" };
+                [pscustomobject]@{PackageName = "winmerge" };
+                [pscustomobject]@{PackageName = "git" };
+                [pscustomobject]@{PackageName = "git-credential-manager-for-windows" };
+                [pscustomobject]@{PackageName = "docker-desktop" };
+                [pscustomobject]@{PackageName = "7zip" };
+                [pscustomobject]@{PackageName = "bandizip" };
+                [pscustomobject]@{PackageName = "peazip" };
+                [pscustomobject]@{PackageName = "filezilla" };
+                [pscustomobject]@{PackageName = "winscp" };
+                [pscustomobject]@{PackageName = "cyberduck" };
+                [pscustomobject]@{PackageName = "vlc" };
+                [pscustomobject]@{PackageName = "mediamonkey" };
+                [pscustomobject]@{PackageName = "mpc-hc" };
+                [pscustomobject]@{PackageName = "keepassxc" };
+                [pscustomobject]@{PackageName = "keeweb" };
+                [pscustomobject]@{PackageName = "lastpass" };
+                [pscustomobject]@{PackageName = "bitwarden" };
+                [pscustomobject]@{PackageName = "1password" };
+                [pscustomobject]@{PackageName = "openvpn" };
+                [pscustomobject]@{PackageName = "wireguard" };
+                [pscustomobject]@{PackageName = "forticlientvpn" };
+                [pscustomobject]@{PackageName = "openconnect-gui" };
+                [pscustomobject]@{PackageName = "lenovo-thinkvantage-system-update" };
+                [pscustomobject]@{PackageName = "microsoft-windows-terminal" };
+                [pscustomobject]@{PackageName = "intel-dsa" };
+                )
             $checkChoco = (Invoke-Expression "choco -v")
             if (-not($checkChoco)) {
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
@@ -1099,8 +1200,13 @@ $cbxPackageManager.Add_SelectionChanged( {
                       
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
             }
+            $cbxVPN.Items.Remove('Hamachi')
+            $cbxVPN.Items.Remove('Global VPN Client')
+            Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
         }
         $global:packageMgr = $packageMgr
+        $global:PackageArray = $PackageArray
+        return $packageArray
     })
 #EMpty Setting For NOW
 $btnSetSeting.Add_Click( {      
@@ -1310,34 +1416,37 @@ $btnCreateRP.Add_Click( {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" -Name SystemRestorePointCreationFrequency -PropertyType DWord -Value 1440 -Force
 
     })
-
-#WINGET BROWSER INSTALL
+################################## BROWSER INSTALL #################################
 $btnBrowserInstall.Add_Click( {
     
         if ($cbxBrowsers.Text -eq "Google Chrome") {
 
-            $browserPackage = "Google.Chrome"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Google*Chrome*"}
+          
         }
         if ($cbxBrowsers.Text -eq "Opera Browser") {
     
-            $browserPackage = "Opera.Opera"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Opera*"}
+        
         }
         if ($cbxBrowsers.Text -eq "Mozilla Firefox") {
-    
-            $browserPackage = "Mozilla.Firefox"
+
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*firefox*"}    
+            
             
         }
-        if ($browserPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $browserPackage"
-                winget install $browserPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $browserPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1346,32 +1455,36 @@ $btnBrowserInstall.Add_Click( {
         }  
 
     })
-#WINGET PDF READER INSTALL
+################################### PDF READER INSTALL##################################
 $btnPdfInstall.Add_Click( {
-    
-        if ($cbxPDFReaders.Text -eq "AdobeAcrobatReaderDC") {
 
-            $pdfAppPackage = "Adobe.AdobeAcrobatReaderDC"
-        }
-        if ($cbxPDFReaders.Text -eq "SumatraPDF") {
+        if ($cbxPDFReaders.Text -eq "Adobe Acrobat") {
 
-            $pdfAppPackage = "SumatraPDF.SumatraPDF"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Adobe*Reader*"}
+            $sysAppPackage = "Adobe.AdobeAcrobatReaderDC"
         }
-        if ($cbxPDFReaders.Text -eq "FoxitReader") {
+        if ($cbxPDFReaders.Text -eq "Sumatra PDF") {
 
-            $pdfAppPackage = "Foxit.FoxitReader"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Sumatra*"}
+            $sysAppPackage = "SumatraPDF.SumatraPDF"
         }
-        if ($pdfAppPackage -eq $null) {
+        if ($cbxPDFReaders.Text -eq "Foxit Reader") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Foxit*"}
+            $sysAppPackage = "Foxit.FoxitReader"
+        }
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $pdfAppPackage"
-                winget install $pdfAppPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $pdfAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1379,43 +1492,50 @@ $btnPdfInstall.Add_Click( {
             }   
         }  
     })
-#WINGET CHAT/VIDEO COMMUNICATION INSTALL
+#################################### CHAT/VIDEO COMMUNICATION INSTALL###################################
 $btnChatInstall.Add_Click( {
         if ($cbxChatApps.Text -eq "Microsoft Teams") {
 
-            $chatAppPackage = "Microsoft.Teams"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Microsoft*Teams*"}
+
         }
         if ($cbxChatApps.Text -eq "Microsoft Skype") {
 
-            $chatAppPackage = "Microsoft.Skype"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Skype*"}
+
         }
         if ($cbxChatApps.Text -eq "Zoom") {
 
-            $chatAppPackage = "Zoom.Zoom"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Zoom*"}
+
         }
         if ($cbxChatApps.Text -eq "Telegram") {
 
-            $chatAppPackage = "Telegram.TelegramDesktop"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Telegram*"}
+            $sysAppPackage = "Telegram.TelegramDesktop"
         }
         if ($cbxChatApps.Text -eq "Signal") {
 
-            $chatAppPackage = "OpenWhisperSystems.Signal"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Signal*"}
+            $sysAppPackage = "OpenWhisperSystems.Signal"
         }
         if ($cbxChatApps.Text -eq "Viber") {
 
-            $chatAppPackage = "Viber.Viber"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Viber*"}
+            
         }
-        if ($chatAppPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $chatAppPackage"
-                winget install $chatAppPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $chatAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1423,31 +1543,35 @@ $btnChatInstall.Add_Click( {
             }   
         }  
     })
-#WINGETT TEXT EDITOR INSTALL
+##################################### TEXT EDITOR INSTALL ####################################
 $btnTextEditorInstall.Add_Click( {
         if ($cbxEditorApps.Text -eq "Notepad++") {
 
-                $textEditorPackage = "Notepad++.Notepad++"
+                $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Notepad*"}
+
             }
             if ($cbxEditorApps.Text -eq "Atom") {
 
-                $textEditorPackage = "GitHub.Atom"
+                $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Atom*"}
+
             }
             if ($cbxEditorApps.Text -eq "Microsoft Office") {
 
-                $textEditorPackage = "Microsoft.Office"
+                $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Office*"}
+
         }
-        if ($textEditorPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $textEditorPackage"
-                winget install $textEditorPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $textEditorPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1455,31 +1579,32 @@ $btnTextEditorInstall.Add_Click( {
             }   
         }  
     })
-#WINGET  Image Application INSTALL
+######################################  Image Application INSTALL #####################################
 $btnImageInstall.Add_Click( {
         if ($cbxImageViwers.Text -eq "IrfanView") {
 
-            $imageViwerPackage = "IrfanSkiljan.IrfanView"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*IrfanView*"}
         }
         if ($cbxImageViwers.Text -eq "GIMP") {
 
-            $imageViwerPackage = "GIMP.GIMP"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*GIMP*"}
         }
         if ($cbxImageViwers.Text -eq "ShareX") {
 
-            $imageViwerPackage = "ShareX.ShareX"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*ShareX*"}
         }
-        if ($imageViwerPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $imageViwerPackage"
-                winget install $imageViwerPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $imageViwerPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1487,51 +1612,63 @@ $btnImageInstall.Add_Click( {
             }   
         }  
     })
-#WINGET DEV TOOLSS
+################################# DEV TOOLS INSTALL #################################
 $btnDevToolsInstall.Add_Click( {
+    #<ComboBoxItem Content="Visual Studio Code"/>
         if ($cbxDevTools.Text -eq "Visual Studio Code") {
-
-            $devToolsPackage = "Microsoft.VisualStudioCode"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*code*"}
+            #$sysAppPackage = "Microsoft.VisualStudioCode"
         }
+        #<ComboBoxItem Content="PyCharm"/>
         if ($cbxDevTools.Text -eq "PyCharm") {
-
-            $devToolsPackage = "JetBrains.PyCharm.Community"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*PyCharm*"}
+            #$sysAppPackage = "JetBrains.PyCharm.Community"
         }
+       # <ComboBoxItem Content="VS 2019 Enterprise"/>
         if ($cbxDevTools.Text -eq "VS 2019 Enterprise") {
 
-            $devToolsPackage = "Microsoft.VisualStudio.2019.Enterprise "
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*VisualStudio*Enterprise"}
+           
         }
+       # <ComboBoxItem Content="Azure Data Studio"/>
         if ($cbxDevTools.Text -eq "Azure Data Studio") {
 
-            $devToolsPackage = "Microsoft.AzureDataStudio "
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Azure*Data*Studio*"}
         }
+        #<ComboBoxItem Content="SQL Management Studio"/>
         if ($cbxDevTools.Text -eq "SQL Managment Studio") {
-
-            $devToolsPackage = "Microsoft.SQLServerManagementStudio"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*SQL*Studio*"}
+            
         }
+       # <ComboBoxItem Content="WinMerge"/>
         if ($cbxDevTools.Text -eq "WinMerge") {
-
-            $devToolsPackage = "WinMerge.WinMerge"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*WinMerge*"}
         }
+       # <ComboBoxItem Content="Git"/>
         if ($cbxDevTools.Text -eq "Git") {
-
-            $devToolsPackage = "Git.Git"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Git"}
+           
         }
+        #<ComboBoxItem Content="GitCredManager"/>
         if ($cbxDevTools.Text -eq "GitCredManager") {
-
-            $devToolsPackage = "Microsoft.GitCredentialManagerCore"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Git*Cred*"}
         }
-        if ($devToolsPackage -eq $null) {
+        # <ComboBoxItem Content="Docker Desktop"/>
+        if ($cbxDevTools.Text -eq "Docker Desktop"){
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Docker*Desktop*"}
+        }
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $devToolsPackage"
-                winget install $devToolsPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $devToolsPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1539,31 +1676,30 @@ $btnDevToolsInstall.Add_Click( {
             }   
         }  
     })
-#WINGET 
+################################## ################################# 
 $btnArhiveAppInstall.Add_Click( {
         if ($cbxArchiveApps.Text -eq "7 Zip Manager") {
-
-            $archiveAppPackage = "7zip.7zip"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*7zip*"}
         }
         if ($cbxArchiveApps.Text -eq "Bandizip") {
-
-            $archiveAppPackage = "Bandisoft.Bandizip"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Bandizip*"}
         }
         if ($cbxArchiveApps.Text -eq "PeaZip") {
-
-            $archiveAppPackage = "Giorgiotani.Peazip"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*PeaZip*"}
+         
         }
-        if ($archiveAppPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $archiveAppPackage"
-                winget install $archiveAppPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $archiveAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1571,31 +1707,35 @@ $btnArhiveAppInstall.Add_Click( {
             }   
         }  
     })
-#WINGET FTP APPLICATIONS INSTALL
+##################################  FTP INSTALL ################################# 
 $btnFtpAppInstall.Add_Click( {
         if ($cbxFtpApps.Text -eq "FileZilla") {
 
-            $ftpAppPackage = "TimKosse.FileZillaClient"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*FileZilla*"}
+           
         }
         if ($cbxFtpApps.Text -eq "WinSCP") {
 
-            $ftpAppPackage = "WinSCP.WinSCP"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*WinSCP*"}
+      
         }
         if ($cbxFtpApps.Text -eq "Cyberduck") {
+            
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Cyberduck*"}
 
-            $ftpAppPackage = "Iterate.Cyberduck"
         }
-        if ($ftpAppPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $ftpAppPackage"
-                winget install $ftpAppPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $ftpAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1603,31 +1743,33 @@ $btnFtpAppInstall.Add_Click( {
             }   
         }  
     })
-#WINGET INSTALL VIDEO APPS
+################################### INSTALL VIDEO APPS##################################
 $btnVideoInstall.Add_Click( {
         if ($cbxVideoApps.Text -eq "VLC") {
 
-            $videoAppPackage = "VideoLAN.VLC"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*VLC*"}
         }
         if ($cbxVideoApps.Text -eq "MediaMonkey") {
 
-            $videoAppPackage = "VentisMedia.MediaMonkey"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*MediaMonkey*"}
         }
         if ($cbxVideoApps.Text -eq "Media Player Classic") {
 
-            $videoAppPackage = "MPC-HC.MPC-HC"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*MPC*"}
+            $sysAppPackage = "MPC-HC.MPC-HC"
         }
-        if ($videoAppPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $videoAppPackage"
-                winget install $videoAppPackage | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $videoAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1635,39 +1777,38 @@ $btnVideoInstall.Add_Click( {
             }   
         }  
     })
-#WINGET INSTALL PASS MANAGER
+#################################INSTALL PASS MANAGER #################################
 $btnPassMgrInstall.Add_Click( {
         if ($cbxPassMgr.Text -eq "KeePassXC") {
 
-            $passMgrPackage = "KeePassXCTeam.KeePassXC"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*KeePass*"}
+
         }
         if ($cbxPassMgr.Text -eq "KeeWeb") {
 
-            $passMgrPackage = "KeeWeb.KeeWeb"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*KeeWeb*"}  
         }
         if ($cbxPassMgr.Text -eq "LastPass") {
-
-            $passMgrPackage = "LogMeIn.LastPass"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*LastPass*"}
         }
         if ($cbxPassMgr.Text -eq "Bitwarden") {
-
-            $passMgrPackage = "Bitwarden.Bitwarden"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Bitwarden*"}
         }
         if ($cbxPassMgr.Text -eq "1Password") {
-
-            $passMgrPackage = "AgileBits.1Password"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*1Password*"}
         }
-        if ($passMgrPackage -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $passMgrPackage"
-                winget install $passMgrPackage | Out-Host
+                Write-host "Installing" + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $passMgrPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage.PackageName" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1675,39 +1816,41 @@ $btnPassMgrInstall.Add_Click( {
             }   
         }  
     })
-#WINGET VPN INSTALL
+################################### VPN INSTALL  ################################# 
 $btnVpnInstall.Add_Click( {
         if ($cbxVPN.Text -eq "OpenVPNTechnologies") {
 
-            $vpnAppPacakge = "OpenVPNTechnologies.OpenVPN"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*code*"}
+            $sysAppPackage = "OpenVPNTechnologies.OpenVPN"
         }
         if ($cbxVPN.Text -eq "WireGuard") {
-
-            $vpnAppPacakge = "WireGuard.WireGuard"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*WireGuard*"}
+            $sysAppPackage = "WireGuard.WireGuard"
         }
         if ($cbxVPN.Text -eq "Hamachi") {
-
-            $vpnAppPacakge = "LogMeIn.Hamachi"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Hamachi*"}
+            $sysAppPackage = "LogMeIn.Hamachi"
         }
         if ($cbxVPN.Text -eq "FortiClient VPN") {
-
-            $vpnAppPacakge = "Fortinet.FortiClientVPN"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Forti*"}
+            $sysAppPackage = "Fortinet.FortiClientVPN"
         }
         if ($cbxVPN.Text -eq "Global VPN Client") {
-
-            $vpnAppPacakge = "SonicWALL.GlobalVPN"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Global*VPN*"}
+            $sysAppPackage = "SonicWALL.GlobalVPN"
         }
-        if ($vpnAppPacakge -eq $null) {
+        if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
         }
         else {
             Try {
-                Write-host "Installing $vpnAppPacakge"
-                winget install $vpnAppPacakge | Out-Host
+                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
-                    Write-Host "Installed $vpnAppPacakge" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1715,19 +1858,25 @@ $btnVpnInstall.Add_Click( {
             }   
         }  
     })
-
+################################# SYS DRIVER INSTALLS #################################
+#sys isntalls
 $btnSysInstalls.Add_Click( {
-        if ($cbxSelectSystemApps.Text -eq "Lenovo SystemUpdate") {
 
-            $sysAppPackage = "Lenovo.SystemUpdate"
+        #Lenovo System Update"
+        if ($cbxSelectSystemApps.Text -eq "Lenovo System Update") {
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Lenovo*Update*"}
         }
-        if ($cbxSelectSystemApps.Text -eq "WindowsTerminal") {
+        #"Windows Terminal"
+        if ($cbxSelectSystemApps.Text -eq "Windows Terminal") {
 
-            $sysAppPackage = "Microsoft.WindowsTerminal"
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Windows*Terminal*"}
+            #$sysAppPackage = "Microsoft.WindowsTerminal"
         }
+        #Intel Driver Assistant
         if ($cbxSelectSystemApps.Text -eq "Intel Driver Assistant") {
 
-            $sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
+            $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Intel*"}
+            #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
         }
         
         if ($sysAppPackage -eq $null) {
@@ -1736,11 +1885,12 @@ $btnSysInstalls.Add_Click( {
         }
         else {
             Try {
-                Write-host "Installing $sysAppPackage"
-                winget install $sysAppPackage | Out-Host
+                Write-host "$InstNotification"
+                $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
+                Invoke-Expression $command| Out-Host
                 if ($?) {
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
-                    #[System.Windows.MessageBox]::Show("Installed $browserPackage".'Installtion Finished', 'OK', 'Information')
+                    #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
             }
             catch {
@@ -1749,4 +1899,4 @@ $btnSysInstalls.Add_Click( {
         }  
     })
 
-$Form.ShowDialog() | out-null
+$MainForm.ShowDialog() | out-null
