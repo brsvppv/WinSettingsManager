@@ -198,29 +198,29 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <Button Name="btnCreateRP" Content="Create Restore Point" HorizontalAlignment="Left" Margin="20,25,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="10" FontFamily="Times New Roman"/>
             <Button Name="btnSystemSettings" Content="System Settings  " HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="10" FontFamily="Times New Roman"/>
             <Button Name="btnCertImport" Content="ImportCertificates" HorizontalAlignment="Left" Margin="216,59,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="BTN1" Content="X" HorizontalAlignment="Left" Margin="216,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="BTN2" Content="X" HorizontalAlignment="Left" Margin="216,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction4" Content="4" HorizontalAlignment="Left" Margin="216,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction5" Content="5" HorizontalAlignment="Left" Margin="216,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction6" Content="6" HorizontalAlignment="Left" Margin="216,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction7" Content="7" HorizontalAlignment="Left" Margin="216,240,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction8" Content="8" HorizontalAlignment="Left" Margin="216,269,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction9" Content="9" HorizontalAlignment="Left" Margin="216,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnLightShot" Content="A" HorizontalAlignment="Left" Margin="216,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnInstallAnyconnect" Content="B" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnInstNet35" Content=".NetFrame 3.5" HorizontalAlignment="Left" Margin="216,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="BTN1" Content="1" HorizontalAlignment="Left" Margin="216,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="BTN2" Content="2" HorizontalAlignment="Left" Margin="216,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction4" Content="3" HorizontalAlignment="Left" Margin="216,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction5" Content="4" HorizontalAlignment="Left" Margin="216,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction6" Content="5" HorizontalAlignment="Left" Margin="216,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction7" Content="6" HorizontalAlignment="Left" Margin="216,240,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction8" Content="7" HorizontalAlignment="Left" Margin="216,269,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction9" Content="8" HorizontalAlignment="Left" Margin="216,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnLightShot" Content="9" HorizontalAlignment="Left" Margin="216,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnInstallAnyconnect" Content="10" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnInstNet35" Content="DotNetFrame 3.5" HorizontalAlignment="Left" Margin="216,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <Button Name="btnUnpinStartMenu" Content="UnpinStartMenu" HorizontalAlignment="Left" Margin="325,59,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <Button Name="btnUnpinTaskBar" Content="UnpinTaskBar" HorizontalAlignment="Left" Margin="325,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction12" Content=">" HorizontalAlignment="Left" Margin="325,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction13" Content=">" HorizontalAlignment="Left" Margin="325,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction14" Content=">" HorizontalAlignment="Left" Margin="325,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction15" Content=">" HorizontalAlignment="Left" Margin="325,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction16" Content=">" HorizontalAlignment="Left" Margin="325,240,0,0" VerticalAlignment="Top" Width="100" Height="22" />
-            <Button Name="btnPerformAction17" Content=">" HorizontalAlignment="Left" Margin="325,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
-            <Button Name="btnPerformAction18" Content="e" HorizontalAlignment="Left" Margin="325,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnMEDC" Content="D" HorizontalAlignment="Left" Margin="325,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnUninstallApps" Content="Uninstall-WSApps" HorizontalAlignment="Left" Margin="325,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="BTN32" Content="X >" HorizontalAlignment="Left" Margin="325,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction12" Content="1" HorizontalAlignment="Left" Margin="325,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction13" Content="2" HorizontalAlignment="Left" Margin="325,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction14" Content="3" HorizontalAlignment="Left" Margin="325,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction15" Content="4" HorizontalAlignment="Left" Margin="325,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction16" Content="5" HorizontalAlignment="Left" Margin="325,240,0,0" VerticalAlignment="Top" Width="100" Height="22" />
+            <Button Name="btnPerformAction17" Content="6" HorizontalAlignment="Left" Margin="325,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
+            <Button Name="btnPerformAction18" Content="7" HorizontalAlignment="Left" Margin="325,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction19" Content="8" HorizontalAlignment="Left" Margin="325,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnPerformAction20" Content="9" HorizontalAlignment="Left" Margin="325,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnUninstallApps" Content="Uninstall-WSApps>" HorizontalAlignment="Left" Margin="325,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <!--  <CheckBox Name="chbWinget" Content="Winget" HorizontalAlignment="Left" Margin="225,5,0,0" VerticalAlignment="Top"/> -->
             <!--<CheckBox Name="chbChocolyte" Content="Chocolyte" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="225,25,0,0" VerticalAlignment="Top"/> -->
             <!-- <CheckBox Name="chbSettings" Content="Settings" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top"  Width="90" Height="20" FontSize="12" FontFamily="Times New Roman"/> -->
@@ -1204,17 +1204,16 @@ $cbxPackageManager.Add_SelectionChanged( {
                       
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
             }
+            Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
+            Start-Sleep -Seconds "1"
             $cbxVPN.Items.Remove('Hamachi')
             $cbxVPN.Items.Remove('Global VPN Client')
-            Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
         }
         $global:packageMgr = $packageMgr
         $global:PackageArray = $PackageArray
         return $packageArray
     })
 #EMpty Setting For NOW
-$btnSetSeting.Add_Click( {      
-    })
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
         UninstallWinApps
@@ -1376,13 +1375,7 @@ $btnAdvertisingID.Add_Click( {
         }
     })
 
-$btnMEDC.Add_Click( {
-       
-    })
 
-$btnEsetAgent.Add_Click( {
-       
-    })
 #Import ALL .cer from specific directory
 $btnCertImport.Add_Click( {
         ImportCertFromDir
@@ -1825,23 +1818,23 @@ $btnVpnInstall.Add_Click( {
         if ($cbxVPN.Text -eq "OpenVPNTechnologies") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*code*"}
-            $sysAppPackage = "OpenVPNTechnologies.OpenVPN"
+            #$sysAppPackage = "OpenVPNTechnologies.OpenVPN"
         }
         if ($cbxVPN.Text -eq "WireGuard") {
             $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*WireGuard*"}
-            $sysAppPackage = "WireGuard.WireGuard"
+            #$sysAppPackage = "WireGuard.WireGuard"
         }
         if ($cbxVPN.Text -eq "Hamachi") {
             $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Hamachi*"}
-            $sysAppPackage = "LogMeIn.Hamachi"
+            #$sysAppPackage = "LogMeIn.Hamachi"
         }
         if ($cbxVPN.Text -eq "FortiClient VPN") {
             $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Forti*"}
-            $sysAppPackage = "Fortinet.FortiClientVPN"
+           #$sysAppPackage = "Fortinet.FortiClientVPN"
         }
         if ($cbxVPN.Text -eq "Global VPN Client") {
             $sysAppPackage = $global:PackageArray |  Where-Object {$_.PackageName -like "*Global*VPN*"}
-            $sysAppPackage = "SonicWALL.GlobalVPN"
+            #$sysAppPackage = "SonicWALL.GlobalVPN"
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
