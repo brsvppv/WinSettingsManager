@@ -1907,7 +1907,7 @@ if ($cbxPackageManager.SelectedIndex -eq 1) {
     {
     $command  = $global:packageMgr +" install " + $Package.PackageName
     Invoke-Expression $command | Out-Host | Write-Verbose
-    Start-Sleep -Seconds -1
+    Start-Sleep -Seconds 1
     [System.Console]::Beep(1111,333)
     }
 }
@@ -1916,7 +1916,7 @@ elseif ($cbxPackageManager.SelectedIndex -eq 2){
     {
     $command  = $global:packageMgr +" install " + $Package.PackageName
     Invoke-Expression $command | Out-Host | Write-Verbose
-    Start-Sleep -Seconds -1
+    Start-Sleep -Seconds 1
     [System.Console]::Beep(1111,333)
     }
 }
