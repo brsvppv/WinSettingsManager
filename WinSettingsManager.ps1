@@ -7,8 +7,10 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 #Get-TimeZone -ListAvailable | Select-Object{$_.id,$_.DisplayName}
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+[void][Reflection.Assembly]::LoadWithPartialName('System.Speech')
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
 Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Speech
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 [xml]$XAML = @"
@@ -1010,15 +1012,11 @@ function DisableIP6 {
 
 }
 Function DoSpeak { 
-    param(
-        $Text
-    )
-    Add-Type -AssemblyName System.speech
-    [Reflection.Assembly]::LoadWithPartialName('System.Speech') | Out-Null
     [System.Console]::Beep(1111, 333)
+    $Text = "Installation of $sysAppPackage.PackageName Finished"
     $object = New-Object System.Speech.Synthesis.SpeechSynthesizer 
-    $object.Speak($Text)   
-
+    $object.Speak($Text)
+    [System.Console]::Beep(1111, 333)
 }
 #[System.Windows.MessageBox]::Show("1",'Info', 'OK', 'Information')
 ######### [System.Windows.MessageBox]::Show("Select Action",'Info', 'OK', 'Information')
@@ -1476,7 +1474,7 @@ $btnBrowserInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1515,7 +1513,7 @@ $btnPdfInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1567,7 +1565,7 @@ $btnChatInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1604,7 +1602,7 @@ $btnTextEditorInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1638,7 +1636,7 @@ $btnImageInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1703,7 +1701,7 @@ $btnDevToolsInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1735,7 +1733,7 @@ $btnArhiveAppInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1772,7 +1770,7 @@ $btnFtpAppInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1807,7 +1805,7 @@ $btnVideoInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1889,7 +1887,7 @@ $btnVpnInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1936,7 +1934,7 @@ $btnSysInstalls.Add_Click( {
                 Start-Sleep -Seconds 1
                 
                 if ($?) {
-                    DoSpeak -Text "Package $sysAppPackage.PackageName Installed" 
+                    DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
