@@ -1887,7 +1887,10 @@ $btnSysInstalls.Add_Click( {
             Try {
                 Write-host "$InstNotification"
                 $command  = $global:packageMgr +" install " + $sysAppPackage.PackageName
-                Invoke-Expression $command| Out-Host
+                Invoke-Expression $command| Out-Host 
+                [System.Console]::Beep(1111,333)
+                Start-Sleep -Seconds 1
+                
                 if ($?) {
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
@@ -1903,14 +1906,18 @@ if ($cbxPackageManager.SelectedIndex -eq 1) {
     foreach($Package in $PackageArray)
     {
     $command  = $global:packageMgr +" install " + $Package.PackageName
-    Invoke-Expression $command| Out-Host -Verbose
+    Invoke-Expression $command | Out-Host | Write-Verbose
+    Start-Sleep -Seconds -1
+    [System.Console]::Beep(1111,333)
     }
 }
 elseif ($cbxPackageManager.SelectedIndex -eq 2){
     foreach($Package in $PackageArray)
     {
     $command  = $global:packageMgr +" install " + $Package.PackageName
-    Invoke-Expression $command| Out-Host -Verbose
+    Invoke-Expression $command | Out-Host | Write-Verbose
+    Start-Sleep -Seconds -1
+    [System.Console]::Beep(1111,333)
     }
 }
 else{ 
