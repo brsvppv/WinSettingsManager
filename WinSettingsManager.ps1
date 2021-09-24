@@ -1053,8 +1053,6 @@ $btnSystemSettings.Add_Click( {
         $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $Settings.FindName($_.Name) }
     
         $btnPerfAction13.Add_Click( {
-           
-
             })
         $Settings.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
@@ -1374,8 +1372,6 @@ $btnAdvertisingID.Add_Click( {
             [System.Windows.MessageBox]::Show("Select Action", 'Info', 'OK', 'Information')
         }
     })
-
-
 #Import ALL .cer from specific directory
 $btnCertImport.Add_Click( {
         ImportCertFromDir
