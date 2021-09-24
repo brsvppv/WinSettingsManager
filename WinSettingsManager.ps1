@@ -219,7 +219,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <Button Name="btnPerformAction17" Content="6" HorizontalAlignment="Left" Margin="325,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
             <Button Name="btnPerformAction18" Content="7" HorizontalAlignment="Left" Margin="325,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <Button Name="btnPerformAction19" Content="8" HorizontalAlignment="Left" Margin="325,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction20" Content="9" HorizontalAlignment="Left" Margin="325,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+            <Button Name="btnInstallAll" Content="Install-All" HorizontalAlignment="Left" Margin="325,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <Button Name="btnUninstallApps" Content="Uninstall-WSApps>" HorizontalAlignment="Left" Margin="325,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
             <!--  <CheckBox Name="chbWinget" Content="Winget" HorizontalAlignment="Left" Margin="225,5,0,0" VerticalAlignment="Top"/> -->
             <!--<CheckBox Name="chbChocolyte" Content="Chocolyte" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="225,25,0,0" VerticalAlignment="Top"/> -->
@@ -1061,7 +1061,7 @@ $btnSystemSettings.Add_Click( {
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             $packageMgr = "Winget"
-            $PackageArray =      @(
+            $PackageArray = @(
                 [pscustomobject]@{PackageName="Google.Chrome"}
                 [pscustomobject]@{PackageName="Opera.Opera"}
                 [pscustomobject]@{PackageName="Mozilla.Firefox"}
@@ -1894,5 +1894,23 @@ $btnSysInstalls.Add_Click( {
             }   
         }  
     })
-
+$btnInstallAll.Add_Click({
+if ($cbxPackageManager.SelectedIndex -eq 1) {
+    foreach($Package in $PackageArray)
+    {
+    $command  = $global:packageMgr +" install " + $Package.PackageName
+    Invoke-Expression $command| Out-Host -Verbose
+    }
+}
+elseif ($cbxPackageManager.SelectedIndex -eq 2){
+    foreach($Package in $PackageArray)
+    {
+    $command  = $global:packageMgr +" install " + $Package.PackageName
+    Invoke-Expression $command| Out-Host -Verbose
+    }
+}
+else{ 
+    Write-Host "No Package Manager Selected"
+}
+})
 $MainForm.ShowDialog() | out-null
