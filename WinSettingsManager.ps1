@@ -1061,6 +1061,7 @@ $btnSystemSettings.Add_Click( {
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             $packageMgr = "Winget"
+
             $PackageArray = @(
                 [pscustomobject]@{PackageName="Google.Chrome"}
                 [pscustomobject]@{PackageName="Opera.Opera"}
@@ -1122,11 +1123,11 @@ $cbxPackageManager.Add_SelectionChanged( {
                 $output = $PSScriptRoot + "\winget-latest.appxbundle"
                 Write-Host "Downloading winget..."
                 Write-Host "Please Wait." -ForegroundColor "Green"
-                Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output
+                Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
                 Write-Host "Installing the winget package"
                 Write-host "Almost Ready" -ForegroundColor "Green"
-                Add-AppxPackage -Path $output
-        
+                Add-AppxPackage -Path $output  | Write-Verbose
+                
                 Write-Host "Cleanup winget install package"
                 if (Test-Path -Path $output) {
                     Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
@@ -1196,7 +1197,7 @@ $cbxPackageManager.Add_SelectionChanged( {
             $checkChoco = (Invoke-Expression "choco -v")
             if (-not($checkChoco)) {
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
-                Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+                Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
             }
             else {
                       
@@ -1914,3 +1915,5 @@ else{
 }
 })
 $MainForm.ShowDialog() | out-null
+
+#Set-ExecutionPolicy Bypass -Scope Process -Force;  Invoke-Command {Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WinSettingsManager.ps1'))}
