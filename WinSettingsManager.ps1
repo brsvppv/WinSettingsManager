@@ -1061,7 +1061,7 @@ $btnSystemSettings.Add_Click( {
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             $packageMgr = "Winget"
-
+            Start-Sleep -Seconds 1
             $PackageArray = @(
                 [pscustomobject]@{PackageName="Google.Chrome"}
                 [pscustomobject]@{PackageName="Opera.Opera"}
@@ -1117,13 +1117,14 @@ $cbxPackageManager.Add_SelectionChanged( {
                 )
             $checkWinget = (Invoke-Expression "winget -v")
             if (-not($checkWinget)) {
-        
+                Start-Sleep -Seconds 1
                 Write-Host "winget is not found, installing it right now." -ForegroundColor 'Magenta'
                 $asset = Invoke-RestMethod -Method Get -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' | ForEach-Object assets | Where-Object name -like "*.msixbundle"
                 $output = $PSScriptRoot + "\winget-latest.appxbundle"
                 Write-Host "Downloading winget..."
                 Write-Host "Please Wait." -ForegroundColor "Green"
                 Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
+                Start-Sleep -Seconds 1
                 Write-Host "Installing the winget package"
                 Write-host "Almost Ready" -ForegroundColor "Green"
                 Add-AppxPackage -Path $output  | Write-Verbose
@@ -1136,6 +1137,7 @@ $cbxPackageManager.Add_SelectionChanged( {
             else {      
                 Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
             }    
+            Start-Sleep -Seconds 1
              #itemm missing pakcages from Choco
              $cbxVPN.Items.Add('Hamachi')
              $cbxVPN.Items.Add('Global VPN Client')  
@@ -1196,6 +1198,7 @@ $cbxPackageManager.Add_SelectionChanged( {
                 )
             $checkChoco = (Invoke-Expression "choco -v")
             if (-not($checkChoco)) {
+                Start-Sleep -Seconds "1"
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
                 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
             }
