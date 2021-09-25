@@ -1022,49 +1022,12 @@ Function DoSpeak {
     [System.Console]::Beep(1111, 333)
 }
 
-#[System.Windows.MessageBox]::Show("1",'Info', 'OK', 'Information')
-######### [System.Windows.MessageBox]::Show("Select Action",'Info', 'OK', 'Information')
 
 ########################### BUTTONS####################
-Function BulkInstall{ 
+Function BulkInstall { 
     
-#$MainForm.Hide()
-[xml]$XAML = @"
-<Window 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Bulk Package Install" Height="365" Width="365" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
-    <Grid Margin="5,5,5,5">
-    <Label Name="lblPackageManager" Content="Available Packges Below&#x9;" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
+    #$MainForm.Hide()
 
-    <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="160,9,0,0" VerticalAlignment="Top" Width="190" SelectedIndex="0">
-        <ComboBoxItem Content="Winget"/>
-        <ComboBoxItem Content="Chocolyte"/>
-    </ComboBox>
-
-    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,46,0,31"  HorizontalAlignment="Left"/>
-    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,46,0,31" HorizontalAlignment="Right"/>
-
-    <Button Name="btnAddPackageToInstall" Content=">" VerticalAlignment="Top" Height="125" Width="20" Margin="160,46,160,0"/>
-    <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="125" Width="20" Margin="160,140,160,0"/>
-
-    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,305,5,0" VerticalAlignment="Top" Height="20"/>
-
-</Grid>
-</Window>
-"@
-#Read XAML
-$reader = (New-Object System.Xml.XmlNodeReader $xaml) 
-try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
-catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
-# Store Form Objects In PowerShell
-$xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-    
-    
-$Settings.ShowDialog() | out-null
-#$Settings.Add_Closing({ })
 
 }
 
@@ -1303,9 +1266,44 @@ $cbxPackageManager.Add_SelectionChanged( {
         return $packageArray
     })
 $btnBulkInstall.Add_Click({
-    BulkInstall
+        [xml]$XAML = @"
+<Window 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Bulk Package Install" Height="365" Width="365" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
+    <Grid Margin="5,5,5,5">
+    <Label Name="lblPackageManager" Content="Available Packges Below&#x9;" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
 
-})
+    <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="160,9,0,0" VerticalAlignment="Top" Width="190" SelectedIndex="0">
+        <ComboBoxItem Content="Winget"/>
+        <ComboBoxItem Content="Chocolyte"/>
+    </ComboBox>
+
+    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,46,0,31"  HorizontalAlignment="Left"/>
+    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,46,0,31" HorizontalAlignment="Right"/>
+
+    <Button Name="btnAddPackageToInstall" Content=">" VerticalAlignment="Top" Height="125" Width="20" Margin="160,46,160,0"/>
+    <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="125" Width="20" Margin="160,140,160,0"/>
+
+    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,305,5,0" VerticalAlignment="Top" Height="20"/>
+
+</Grid>
+</Window>
+"@
+        #Read XAML
+        $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
+        try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
+        catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
+        # Store Form Objects In PowerShell
+        $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
+    
+    
+        $Settings.ShowDialog() | out-null
+        #$Settings.Add_Closing({ })
+
+    })
 #EMpty Setting For NOW
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
@@ -2026,7 +2024,7 @@ $btnSysInstalls.Add_Click( {
             }   
         }  
     })
-   #################################  Install-ALl #################################
+#################################  Install-ALl #################################
 $btnInstallAll.Add_Click({
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             foreach ($Package in $PackageArray) {
