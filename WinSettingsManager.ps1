@@ -1023,38 +1023,6 @@ Function DoSpeak {
     [System.Console]::Beep(1111, 333)
 }
 
-function TestOpenPort {
-    [CmdletBinding()]
-    param
-    (
-        [Parameter(Position=0)]
-        $Target='localhost', 
-        [Parameter(Mandatory=$true, Position=1, Helpmessage = 'Enter Port Numbers. Separate them by comma.')]
-        $Port
-    )
-    $result=@()
-    
-    foreach ($i in $Target)
-        
-        {
-            foreach ($p in $Port)
-                
-                {
-                    $a=Test-NetConnection -ComputerName $i -Port $p -WarningAction SilentlyContinue                
-                    $result+=New-Object -TypeName PSObject -Property ([ordered]@{
-                                    'Target'=$a.ComputerName;
-                                    'RemoteAddress'=$a.RemoteAddress;
-                                    'Port'=$a.RemotePort;
-                                    'Status'=$a.tcpTestSucceeded
-                                                                        })    
-                }
-        }
-    Write-Output $result
-    $mytarget = "31.13.228.132"
-    #Test-OpenPort -Target "31.13.228.241" -Port 1723
-    Test-OpenPort -Target $mytarget -Port 3389,6869,7046,7057,7058,7047, 7048
-    }
-
 #[System.Windows.MessageBox]::Show("1",'Info', 'OK', 'Information')
 ######### [System.Windows.MessageBox]::Show("Select Action",'Info', 'OK', 'Information')
 
