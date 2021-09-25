@@ -1021,11 +1021,7 @@ Function DoSpeak {
     $object.Speak($Text)
     [System.Console]::Beep(1111, 333)
 }
-
-
-########################### BUTTONS####################
-
-
+########################## BUTTONS####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
         [xml]$XAML = @"
@@ -1262,29 +1258,29 @@ $cbxPackageManager.Add_SelectionChanged( {
     })
 $btnBulkInstall.Add_Click({
         [xml]$XAML = @"
-<Window 
+    <Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Bulk Package Install" Height="365" Width="365" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
-    <Grid>
-    <Label Name="lblPackageManager" Content="Available Packges Below&#x9;" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
+    Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
+<Grid>
+    <Label Name="lblPackageManager" Content="Custom List of Packages" Margin="0,8,0,0" VerticalAlignment="Top"/>
 
-    <ComboBox Name="cbxBulkPackageManager" HorizontalAlignment="Left" Margin="158,9,0,0" VerticalAlignment="Top" Width="190" SelectedIndex="0">
-         <ComboBoxItem Content="No Package Manager Selected"/>
+    <ComboBox Name="cbxBulkPackageManager" Width="175" Height="22" VerticalAlignment="Top"  Margin="207,10,2,0" SelectedIndex="0">
+        <ComboBoxItem Content="No Package Manager Selected"/>
         <ComboBoxItem Content="Winget"/>
         <ComboBoxItem Content="Chocolyte"/>
     </ComboBox>
 
-    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,45,0,30"  HorizontalAlignment="Left"/>
-    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,45,0,30" HorizontalAlignment="Right"/>
+    <ListBox Name="ListAvailablePackages" Height="285" Margin="1,40,209,0" VerticalAlignment="Top" Width="174"/>
+    <ListBox Name="ListPackagesToInstall" Height="285" Margin="209,40,1,0" VerticalAlignment="Top" Width="174"/>
 
-    <Button Name="btnAddPackageToInstall" Content=">" VerticalAlignment="Top" Height="125" Width="20" Margin="160,46,160,0"/>
-    <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="125" Width="20" Margin="160,140,160,0"/>
+    <Button Name="btnAddPackageToInstall" Content="&gt;" Height="135" Width="22" Margin="179,41,179,206" VerticalAlignment="Top" />
+    <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="135" Width="22" Margin="179,189,179,35" VerticalAlignment="Top" />
 
-    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,305,5,0" VerticalAlignment="Top" Height="20"/>
-
+    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,350,5,0" VerticalAlignment="Top" Height="20"/>
+    <CheckBox Name="ChBPackageList" Content="Load All Available Packages" Margin="0,0,0,45" VerticalAlignment="Bottom" />
 </Grid>
 </Window>
 "@
@@ -1294,27 +1290,93 @@ $btnBulkInstall.Add_Click({
         catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
         # Store Form Objects In PowerShell
         $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
+
+        $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
+        $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
+            [pscustomobject]@{
+                PackageName = $ChockPackage
+            }
+        }
+        $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
+        $WingetWebList = foreach ($WingetPackage in $WingetWebList ) {
+            [pscustomobject]@{
+                PackageName = $WingetPackage
+            }
+        }
         $BulkInstaller.Add_Loaded({
-           
+
                 $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
+            
                 if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                    foreach ($package in $WingetPackages){
-                    $ListAvailablePackages.Items.Add($package.PackageName)
+                    foreach ($package in $WingetWebList) {
+                        $ListAvailablePackages.Items.Add($package.PackageName)
                     }
-        
                 }
                 elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                    foreach ($package in $ChocoPackages){
+                    foreach ($package in $ChocoWebList) {
                         $ListAvailablePackages.Items.Add($package.PackageName)
-                        }                   
+                    }                   
                 }
                 else {
                     Write-Host "NO PACKAGE MANAGER SELECTED"
-
                 }
             })
+        $ChBPackageList.Add_CheckStateChanged({
+            if($ChBPackageList.IsChecked){
+                $ListAvailablePackages.Items.Clear()
+                $WingetAllPackages = "Winget Search"
+            
+            }
+            {else {
+                
+            }}
+        })
+        $cbxBulkPackageManager.Add_SelectionChanged({
+                $ListAvailablePackages.Items.Clear()
+                $ListPackagesToInstall.Items.Clear()
+                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                    foreach ($Package in $WingetWebList) {
+            
+                        $ListAvailablePackages.Items.Add($Package.PackageName)
+                    }
+                }
+                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    foreach ($Package in $ChocoWebList) {
+            
+                        $ListAvailablePackages.Items.Add($Package.PackageName)
+                    }
+                }
+                else {
+                    Write-Host "Select Package Manager "
+                } 
+            })
+        $btnAddPackageToInstall.Add_click({
+                $SelectedPackge = $ListAvailablePackages.SelectedValue
+                if($SelectedPackge -ne $null){
+                $ListAvailablePackages.Items.Remove($SelectedPackge)
+                $ListPackagesToInstall.Items.Add($SelectedPackge)
+                }
+                else{
+                    Write-Host 'No Package Selected;'
+                }
+            })
+        $btnRemovePackgeFromInstall.Add_click({
+            $SelectedPackge = $ListPackagesToInstall.SelectedItem
+            if($SelectedPackge -ne $null){
+                $ListPackagesToInstall.Items.Remove($SelectedPackge)
+                $ListAvailablePackages.Items.Add($SelectedPackge)
+            }
+            else {
+                Write-host 'no packge slected'
+            }
+            })
+        $btnPerformBlukInstallation.Add_click({
+
+            })
+            $BulkInstaller.Add_Closing({
+
+            })
         $BulkInstaller.ShowDialog() | out-null
-        #$Settings.Add_Closing({ })
 
     })
 #EMpty Setting For NOW
@@ -2022,8 +2084,7 @@ $btnSysInstalls.Add_Click( {
             Try {
                 Write-host "$InstNotification"
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
-                Invoke-Expression $command | Out-Host 
-               
+                Invoke-Expression $command | Out-Host         
                 Start-Sleep -Seconds 1
                 
                 if ($?) {
