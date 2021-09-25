@@ -1565,7 +1565,7 @@ $btnChatInstall.Add_Click( {
                 $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 if ($?) {
-                    DoSpeak
+                    DoSpeak("$text")
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
