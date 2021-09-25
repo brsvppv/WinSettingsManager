@@ -1321,16 +1321,18 @@ $btnBulkInstall.Add_Click({
                     Write-Host "NO PACKAGE MANAGER SELECTED"
                 }
             })
-        $ChBPackageList.Add_CheckStateChanged({
-            if($ChBPackageList.IsChecked){
+        $ChBPackageList.Add_Checked({
                 $ListAvailablePackages.Items.Clear()
                 $WingetAllPackages = "Winget Search"
-            
-            }
-            {else {
+                $GetWingetPackages = Invoke-Expression ($WingetAllPackages)
+                foreach ($item in $GetWingetPackages){
+                    $ListAvailablePackages.Items.Add($Item) | Select-Object {$_.Name}
+                }
+            })
+            $Item1.Add_UnChecked({
                 
-            }}
-        })
+
+            })          
         $cbxBulkPackageManager.Add_SelectionChanged({
                 $ListAvailablePackages.Items.Clear()
                 $ListPackagesToInstall.Items.Clear()
