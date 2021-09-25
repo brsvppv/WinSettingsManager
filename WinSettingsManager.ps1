@@ -56,6 +56,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             </ComboBox>
             <ComboBox Name="cbxImageViwers" HorizontalAlignment="Left" Margin="20,179,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select Image Viewer"/>
+                <ComboBoxItem Content="Flameshot"/>
                 <ComboBoxItem Content="GIMP"/>
                 <ComboBoxItem Content="IrfanView"/>
                 <ComboBoxItem Content="ShareX"/>
@@ -107,9 +108,12 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             </ComboBox>
             <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
                 <ComboBoxItem Content="Select System Package "/>
-                <ComboBoxItem Content="Lenovo System Update"/>
                 <ComboBoxItem Content="Windows Terminal"/>
                 <ComboBoxItem Content="GnuPG Encryption"/>
+                <ComboBoxItem Content="Gpg4win"/>
+                <ComboBoxItem Content="Everything"/>
+                <ComboBoxItem Content="WizTree"/>
+                <ComboBoxItem Content="Lenovo System Update"/>
                 <ComboBoxItem Content="Intel Driver Assistant"/>
     
             </ComboBox>
@@ -761,51 +765,7 @@ function UninstallWinApps {
         }
     }
 
-    function AddControl {
-        [CmdletBinding()]
-        param
-        (
-            [Parameter(
-                Mandatory = $true,
-                ValueFromPipeline = $true
-            )]
-            [ValidateNotNull()]
-            [PSCustomObject[]]
-            $Packages
-        )
-
-        process {
-            foreach ($Package in $Packages) {
-                $CheckBox = New-Object -TypeName System.Windows.Controls.CheckBox
-                $CheckBox.Tag = $Package.PackageFullName
-
-                $TextBlock = New-Object -TypeName System.Windows.Controls.TextBlock
-
-                if ($Package.DisplayName) {
-                    $TextBlock.Text = $Package.DisplayName
-                }
-                else {
-                    $TextBlock.Text = $Package.Name
-                }
-
-                $StackPanel = New-Object -TypeName System.Windows.Controls.StackPanel
-                $StackPanel.Children.Add($CheckBox) | Out-Null
-                $StackPanel.Children.Add($TextBlock) | Out-Null
-
-                $PanelContainer.Children.Add($StackPanel) | Out-Null
-
-                if ($UncheckedAppPackages.Contains($Package.Name)) {
-                    $CheckBox.IsChecked = $false
-                }
-                else {
-                    $CheckBox.IsChecked = $true
-                    $PackagesToRemove.Add($Package.PackageFullName)
-                }
-
-                $CheckBox.Add_Click( { CheckBoxClick })
-            }
-        }
-    }
+    
     function ChkBoxForAllUsesrsClick {
         $PanelContainer.Children.RemoveRange(0, $PanelContainer.Children.Count)
         $PackagesToRemove.Clear()
@@ -1013,11 +973,43 @@ function DisableIP6 {
 }
 Function DoSpeak { 
     [System.Console]::Beep(1111, 333)
-    $Text = "Installation of $sysAppPackage.PackageName Finished"
+    $Text = "Installation Complete"
     $object = New-Object System.Speech.Synthesis.SpeechSynthesizer 
     $object.Speak($Text)
     [System.Console]::Beep(1111, 333)
 }
+
+function TestOpenPort {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Position=0)]
+        $Target='localhost', 
+        [Parameter(Mandatory=$true, Position=1, Helpmessage = 'Enter Port Numbers. Separate them by comma.')]
+        $Port
+    )
+    $result=@()
+    
+    foreach ($i in $Target)
+        
+        {
+            foreach ($p in $Port)
+                
+                {
+                    $a=Test-NetConnection -ComputerName $i -Port $p -WarningAction SilentlyContinue                
+                    $result+=New-Object -TypeName PSObject -Property ([ordered]@{
+                                    'Target'=$a.ComputerName;
+                                    'RemoteAddress'=$a.RemoteAddress;
+                                    'Port'=$a.RemotePort;
+                                    'Status'=$a.tcpTestSucceeded
+                                                                        })    
+                }
+        }
+    Write-Output $result
+    }
+    $mytarget = "31.13.228.132"
+    #Test-OpenPort -Target "31.13.228.241" -Port 1723
+    Test-OpenPort -Target $mytarget -Port ""
 #[System.Windows.MessageBox]::Show("1",'Info', 'OK', 'Information')
 ######### [System.Windows.MessageBox]::Show("Select Action",'Info', 'OK', 'Information')
 
@@ -1075,16 +1067,16 @@ $btnSystemSettings.Add_Click( {
                 DisableIP6
             })
         $btnScanHealth.Add_Click{ (
-                DISM /Online /Cleanup-Image /ScanHealth
+                DISM /Online /Cleanup-Image /ScanHealth | Out-host
             ) }
         $btnCheckHealth.Add_Click{ (
-                DISM /Online /Cleanup-Image /CheckHealth
+                DISM /Online /Cleanup-Image /CheckHealth | Out-host
             ) }
         $btnRestoreHealth.Add_Click{ (
-                DISM /Online /Cleanup-Image /RestoreHealth
+                DISM /Online /Cleanup-Image /RestoreHealth | Out-host
             ) }
         $btnSfcScan.Add_Click{ (
-                sfc.exe /scannow
+                sfc.exe /scannow | Out-host
             ) }
         $Settings.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
@@ -1145,6 +1137,11 @@ $cbxPackageManager.Add_SelectionChanged( {
                 [pscustomobject]@{PackageName = "Microsoft.WindowsTerminal" }
                 [pscustomobject]@{PackageName = "Intel.IntelDriverAndSupportAssistant" }  
                 [pscustomobject]@{PackageName = "GnuPG.GnuPG" }
+                [pscustomobject]@{PackageName = "GnuPG.Gpg4win" }
+                [pscustomobject]@{PackageName = "AntibodySoftware.WizTree" }
+                [pscustomobject]@{PackageName = "Flameshot.Flameshot" }
+                [pscustomobject]@{PackageName = "voidtools.Everything" }  
+                [pscustomobject]@{PackageName = "Microsoft.AzureStorageExplorer" }
                 
             )
             $checkWinget = (Invoke-Expression "winget -v")
@@ -1227,6 +1224,11 @@ $cbxPackageManager.Add_SelectionChanged( {
                 [pscustomobject]@{PackageName = "microsoft-windows-terminal" };
                 [pscustomobject]@{PackageName = "intel-dsa" };
                 [pscustomobject]@{PackageName = "GnuPG" };
+                [pscustomobject]@{PackageName = "WizTree" };
+                [pscustomobject]@{PackageName = "gpg4win" };
+                [pscustomobject]@{PackageName = "flameshot" };
+                [pscustomobject]@{PackageName = "Everything" };
+                [pscustomobject]@{PackageName = "microsoftazurestorageexplorer" };
             )
             $checkChoco = (Invoke-Expression "choco -v")
             if (-not($checkChoco)) {
@@ -1614,6 +1616,10 @@ $btnTextEditorInstall.Add_Click( {
     })
 ######################################  Image Application INSTALL #####################################
 $btnImageInstall.Add_Click( {
+        if ($cbxImageViwers.Text -eq "Flameshot") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*flameshot*" }
+        }
         if ($cbxImageViwers.Text -eq "IrfanView") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*IrfanView*" }
@@ -1672,6 +1678,10 @@ $btnDevToolsInstall.Add_Click( {
         #<ComboBoxItem Content="SQL Management Studio"/>
         if ($cbxDevTools.Text -eq "SQL Managment Studio") {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*SQL*Studio*" }
+            
+        }
+        if ($cbxDevTools.Text -eq "Azure Storage Explorer") {
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*storageexplorer*" }
             
         }
         # <ComboBoxItem Content="WinMerge"/>
@@ -1920,6 +1930,21 @@ $btnSysInstalls.Add_Click( {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Intel*" }
             #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
         }
+        if ($cbxSelectSystemApps.Text -eq "Gpg4win") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*gpg4win*" }
+            #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
+        }
+        if ($cbxSelectSystemApps.Text -eq "WizTree") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*WizTree*" }
+            #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
+        }
+        if ($cbxSelectSystemApps.Text -eq "Everything") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Everything*" }
+            #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
+        }
         
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
@@ -1944,6 +1969,7 @@ $btnSysInstalls.Add_Click( {
             }   
         }  
     })
+   #################################  Install-ALl #################################
 $btnInstallAll.Add_Click({
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             foreach ($Package in $PackageArray) {
