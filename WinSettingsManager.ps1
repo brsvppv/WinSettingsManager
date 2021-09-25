@@ -1024,12 +1024,7 @@ Function DoSpeak {
 
 
 ########################### BUTTONS####################
-Function BulkInstall { 
-    
-    #$MainForm.Hide()
 
-
-}
 
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
@@ -1273,16 +1268,17 @@ $btnBulkInstall.Add_Click({
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Bulk Package Install" Height="365" Width="365" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
-    <Grid Margin="5,5,5,5">
+    <Grid>
     <Label Name="lblPackageManager" Content="Available Packges Below&#x9;" HorizontalAlignment="Left" Margin="10,9,0,0" VerticalAlignment="Top"/>
 
-    <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="160,9,0,0" VerticalAlignment="Top" Width="190" SelectedIndex="0">
+    <ComboBox Name="cbxBulkPackageManager" HorizontalAlignment="Left" Margin="158,9,0,0" VerticalAlignment="Top" Width="190" SelectedIndex="0">
+         <ComboBoxItem Content="No Package Manager Selected"/>
         <ComboBoxItem Content="Winget"/>
         <ComboBoxItem Content="Chocolyte"/>
     </ComboBox>
 
-    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,46,0,31"  HorizontalAlignment="Left"/>
-    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,46,0,31" HorizontalAlignment="Right"/>
+    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,45,0,30"  HorizontalAlignment="Left"/>
+    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,45,0,30" HorizontalAlignment="Right"/>
 
     <Button Name="btnAddPackageToInstall" Content=">" VerticalAlignment="Top" Height="125" Width="20" Margin="160,46,160,0"/>
     <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="125" Width="20" Margin="160,140,160,0"/>
@@ -1298,9 +1294,26 @@ $btnBulkInstall.Add_Click({
         catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
         # Store Form Objects In PowerShell
         $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-    
-    
-        $Settings.ShowDialog() | out-null
+        $BulkInstaller.Add_Loaded({
+           
+                $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
+                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                    foreach ($package in $WingetPackages){
+                    $ListAvailablePackages.Items.Add($package.PackageName)
+                    }
+        
+                }
+                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    foreach ($package in $ChocoPackages){
+                        $ListAvailablePackages.Items.Add($package.PackageName)
+                        }                   
+                }
+                else {
+                    Write-Host "NO PACKAGE MANAGER SELECTED"
+
+                }
+            })
+        $BulkInstaller.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
 
     })
