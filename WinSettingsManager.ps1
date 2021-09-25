@@ -1013,7 +1013,6 @@ function DisableIP6 {
     foreach ($adapter in $adapters) {
         Disable-NetAdapterBinding -InterfaceAlias $adapter.InterfaceAlias -ComponentID ms_tcpip6 -Verbose
     }
-
 }
 Function DoSpeak { 
     [System.Console]::Beep(1111, 333)
