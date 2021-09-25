@@ -1027,6 +1027,7 @@ Function DoSpeak {
 
 ########################### BUTTONS####################
 Function BulkInstall{ 
+    
 #$MainForm.Hide()
 [xml]$XAML = @"
 <Window 
@@ -1042,12 +1043,15 @@ Function BulkInstall{
         <ComboBoxItem Content="Winget"/>
         <ComboBoxItem Content="Chocolyte"/>
     </ComboBox>
-    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,46,0,31"  HorizontalAlignment="Left"  IsEditable="False"/>
-    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,46,0,31" HorizontalAlignment="Right"  IsEditable="False"/>
+
+    <ListBox Name="ListAvailablePackages" Width="165" Height="250" Margin="0,46,0,31"  HorizontalAlignment="Left"/>
+    <ListBox Name="ListPackagesToInstall" Width="165" Height="250" Margin="0,46,0,31" HorizontalAlignment="Right"/>
 
     <Button Name="btnAddPackageToInstall" Content=">" VerticalAlignment="Top" Height="125" Width="20" Margin="160,46,160,0"/>
     <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="125" Width="20" Margin="160,140,160,0"/>
-    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,305,5,0" VerticalAlignment="Top" Height="20"/
+
+    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,305,5,0" VerticalAlignment="Top" Height="20"/>
+
 </Grid>
 </Window>
 "@
@@ -1057,9 +1061,8 @@ try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
 catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
 # Store Form Objects In PowerShell
 $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-$BulkInstaller.Add_Loaded{
-
-}
+    
+    
 $Settings.ShowDialog() | out-null
 #$Settings.Add_Closing({ })
 
