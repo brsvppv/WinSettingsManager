@@ -765,7 +765,51 @@ function UninstallWinApps {
         }
     }
 
-    
+    function AddControl {
+        [CmdletBinding()]
+        param
+        (
+            [Parameter(
+                Mandatory = $true,
+                ValueFromPipeline = $true
+            )]
+            [ValidateNotNull()]
+            [PSCustomObject[]]
+            $Packages
+        )
+
+        process {
+            foreach ($Package in $Packages) {
+                $CheckBox = New-Object -TypeName System.Windows.Controls.CheckBox
+                $CheckBox.Tag = $Package.PackageFullName
+
+                $TextBlock = New-Object -TypeName System.Windows.Controls.TextBlock
+
+                if ($Package.DisplayName) {
+                    $TextBlock.Text = $Package.DisplayName
+                }
+                else {
+                    $TextBlock.Text = $Package.Name
+                }
+
+                $StackPanel = New-Object -TypeName System.Windows.Controls.StackPanel
+                $StackPanel.Children.Add($CheckBox) | Out-Null
+                $StackPanel.Children.Add($TextBlock) | Out-Null
+
+                $PanelContainer.Children.Add($StackPanel) | Out-Null
+
+                if ($UncheckedAppPackages.Contains($Package.Name)) {
+                    $CheckBox.IsChecked = $false
+                }
+                else {
+                    $CheckBox.IsChecked = $true
+                    $PackagesToRemove.Add($Package.PackageFullName)
+                }
+
+                $CheckBox.Add_Click( { CheckBoxClick })
+            }
+        }
+    }
     function ChkBoxForAllUsesrsClick {
         $PanelContainer.Children.RemoveRange(0, $PanelContainer.Children.Count)
         $PackagesToRemove.Clear()
@@ -1006,10 +1050,11 @@ function TestOpenPort {
                 }
         }
     Write-Output $result
-    }
     $mytarget = "31.13.228.132"
     #Test-OpenPort -Target "31.13.228.241" -Port 1723
-    Test-OpenPort -Target $mytarget -Port ""
+    Test-OpenPort -Target $mytarget -Port 3389,6869,7046,7057,7058,7047, 7048
+    }
+
 #[System.Windows.MessageBox]::Show("1",'Info', 'OK', 'Information')
 ######### [System.Windows.MessageBox]::Show("Select Action",'Info', 'OK', 'Information')
 
