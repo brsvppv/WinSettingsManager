@@ -1413,20 +1413,19 @@ $btnBulkInstall.Add_Click({
             if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
                 
                 foreach ($Package in $ListPackagesToInstall.Items) {
-             
-                 $command = $global:packageMgr + " install " + $Package
-                 Invoke-Expression $command | Out-Host | Write-Verbose
-                 Start-Sleep -Seconds 1
-                 [System.Console]::Beep(1111, 333)
+                    $command = $global:packageMgr + " install " + $Package
+                    Invoke-Expression $command | Out-Host | Write-Verbose
+                    Start-Sleep -Seconds 1
+                    [System.Console]::Beep(1111, 333)
                 }
             }
             elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
                 foreach ($Package in $ListPackagesToInstall.Items) {
-                   $command = $global:packageMgr + " install " + $Package
-                   Invoke-Expression $command | Out-Host | Write-Verbose
-                   Start-Sleep -Seconds 1
-                   DoSpeak
-                   [System.Console]::Beep(1111, 333)
+                    $command = $global:packageMgr + " install " + $Package
+                    Invoke-Expression $command | Out-Host | Write-Verbose
+                    Start-Sleep -Seconds 1
+                    DoSpeak
+                    [System.Console]::Beep(1111, 333)
                 }
             }
             else { 
