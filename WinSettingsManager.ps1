@@ -1323,7 +1323,6 @@ $btnBulkInstall.Add_Click({
         catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
         # Store Form Objects In PowerShell
         $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-
         $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
         $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
             [pscustomobject]@{
@@ -1337,7 +1336,7 @@ $btnBulkInstall.Add_Click({
             }
         }
         $BulkInstaller.Add_Loaded({
-
+            
                 $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
 
                 if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
@@ -1366,20 +1365,24 @@ $btnBulkInstall.Add_Click({
             })          
         $cbxBulkPackageManager.Add_SelectionChanged({
                 $global:packageMgr
+                $global:CommandInstall 
                 $ListAvailablePackages.Items.Clear()
                 $ListPackagesToInstall.Items.Clear()
                 if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
                     CheckWinget
-                    $global:packageMgr = "Winget"
-                    #$global:Command = $global:packageMgr + " install " + $Package
+                    $global:packageMgr = "winget"
+                    $InstCMD =  'install -e --id'
+                    $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
                     foreach ($Package in $WingetWebList) {
                         $ListAvailablePackages.Items.Add($Package.PackageName)
                     }
                 }
                 elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
                     CheckChoco
-                    $global:packageMgr = "Choco"
+                    $global:packageMgr = "choco"
+                    $InstCMD =  'install'
                     #$global:Command  = $global:packageMgr + " install " + $Package
+                    $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
                     Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
                     foreach ($Package in $ChocoWebList) {
                         $ListAvailablePackages.Items.Add($Package.PackageName)
@@ -1406,14 +1409,14 @@ $btnBulkInstall.Add_Click({
                 $ListAvailablePackages.Items.Add($SelectedPackge)
             }
             else {
-                Write-host 'no packge slected'
+                Write-host 'No packge slected'
             }
             })
         $btnPerformBlukInstallation.Add_click({
             if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
                 
                 foreach ($Package in $ListPackagesToInstall.Items) {
-                    $command = $global:packageMgr + " install " + $Package
+                    $command = $global:CommandInstall + $Package
                     Invoke-Expression $command | Out-Host | Write-Verbose
                     Start-Sleep -Seconds 1
                     [System.Console]::Beep(1111, 333)
@@ -1421,7 +1424,7 @@ $btnBulkInstall.Add_Click({
             }
             elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
                 foreach ($Package in $ListPackagesToInstall.Items) {
-                    $command = $global:packageMgr + " install " + $Package
+                    $command = $global:CommandInstall + $Package
                     Invoke-Expression $command | Out-Host | Write-Verbose
                     Start-Sleep -Seconds 1
                     DoSpeak
