@@ -1425,6 +1425,7 @@ $btnBulkInstall.Add_Click({
                    $command = $global:packageMgr + " install " + $Package
                    Invoke-Expression $command | Out-Host | Write-Verbose
                    Start-Sleep -Seconds 1
+                   DoSpeak
                    [System.Console]::Beep(1111, 333)
                 }
             }
