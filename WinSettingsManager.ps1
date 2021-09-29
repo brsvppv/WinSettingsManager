@@ -1029,11 +1029,11 @@ Function CheckWinget{
                 Write-Host "Please Wait." -ForegroundColor "Green"
                 Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
                 Start-Sleep -Seconds 1
-                Write-Host "Installing the winget package"
-                Write-host "Almost Ready" -ForegroundColor "Green"
+                Write-Host "Installing Winget Package"
+                Write-host "Finilizing" -ForegroundColor "Green"
                 Add-AppxPackage -Path $output  | Write-Verbose
                 
-                Write-Host "Cleanup winget install package"
+                Write-Host "Cleanup..."
                 if (Test-Path -Path $output) {
                     Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
                 }
