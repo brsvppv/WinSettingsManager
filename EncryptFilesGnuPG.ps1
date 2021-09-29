@@ -17,21 +17,21 @@ function GnuPGEncrypt {
 		[string]$GpgPath = 'C:\Program Files (x86)\GnuPG\bin\gpg.exe'
 			
 	)
-	process {
-		try {
+	Process {
+		Try {
 			Get-ChildItem -Path $FolderPath | ForEach-Object {
 				Write-host "Encrypting File : [$($_.FullName)]"
 				& $GpgPath --batch --passphrase $SecurePassword -c $_.FullName
 			
 			} 
 			$EncryptedFiles = Get-ChildItem -Path $FolderPath | Where-Object {$_.Extension -eq "gpg"}
-			foreach ($file in $EncryptedFiles)
+			ForEach ($file in $EncryptedFiles)
 			{
 				write-host $file
 			}
 			Get-ChildItem -Path $FolderPath -Filter '*.gpg'
 		}
-		catch {
+		Catch {
 			Write-Error $_.Exception.Message
 		}
 		
