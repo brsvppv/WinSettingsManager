@@ -3,7 +3,6 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
     Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
     exit;
 }
-
 #Get-TimeZone -ListAvailable | Select-Object{$_.id,$_.DisplayName}
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
@@ -258,11 +257,9 @@ $global:packageMgr = $null
 #$MainForm.Topmost = $True
 $sysAppPackage = $null
 $InstNotification = "Installing" + $sysAppPackage.PackageName
-
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
 #write-host $orig -ForegroundColor Yellow
-
 Function RequireAdmin {
     If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
         Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
@@ -1021,6 +1018,43 @@ Function DoSpeak {
     $object.Speak($Text)
     [System.Console]::Beep(1111, 333)
 }
+Function CheckWinget{
+    $checkWinget = (Invoke-Expression "winget -v")
+            if (-not($checkWinget)) {
+                Start-Sleep -Seconds 1
+                Write-Host "winget is not found, installing it right now." -ForegroundColor 'Magenta'
+                $asset = Invoke-RestMethod -Method Get -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' | ForEach-Object assets | Where-Object name -like "*.msixbundle"
+                $output = $PSScriptRoot + "\winget-latest.appxbundle"
+                Write-Host "Downloading winget..."
+                Write-Host "Please Wait." -ForegroundColor "Green"
+                Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
+                Start-Sleep -Seconds 1
+                Write-Host "Installing the winget package"
+                Write-host "Almost Ready" -ForegroundColor "Green"
+                Add-AppxPackage -Path $output  | Write-Verbose
+                
+                Write-Host "Cleanup winget install package"
+                if (Test-Path -Path $output) {
+                    Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
+                }
+            }
+            else {      
+                Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
+            }
+            
+}
+function CheckChoco{
+    $checkChoco = (Invoke-Expression "choco -v")
+    if (-not($checkChoco)) {
+        Start-Sleep -Seconds "1"
+        Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
+        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
+    }
+    else {
+              
+        Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
+    }
+}
 ########################## BUTTONS####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
@@ -1266,7 +1300,6 @@ $btnBulkInstall.Add_Click({
     Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
 <Grid>
     <Label Name="lblPackageManager" Content="Custom List of Packages" Margin="0,8,0,0" VerticalAlignment="Top"/>
-
     <ComboBox Name="cbxBulkPackageManager" Width="175" Height="22" VerticalAlignment="Top"  Margin="207,10,2,0" SelectedIndex="0">
         <ComboBoxItem Content="No Package Manager Selected"/>
         <ComboBoxItem Content="Winget"/>
@@ -1306,7 +1339,7 @@ $btnBulkInstall.Add_Click({
         $BulkInstaller.Add_Loaded({
 
                 $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
-            
+
                 if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
                     foreach ($package in $WingetWebList) {
                         $ListAvailablePackages.Items.Add($package.PackageName)
@@ -1329,22 +1362,26 @@ $btnBulkInstall.Add_Click({
                     $ListAvailablePackages.Items.Add($Item) | Select-Object {$_.Name}
                 }
             })
-            $Item1.Add_UnChecked({
-                
-
+        $ChBPackageList.Add_UnChecked({
             })          
         $cbxBulkPackageManager.Add_SelectionChanged({
+                $global:packageMgr
                 $ListAvailablePackages.Items.Clear()
                 $ListPackagesToInstall.Items.Clear()
                 if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                    CheckWinget
+                    $global:packageMgr = "Winget"
+                    #$global:Command = $global:packageMgr + " install " + $Package
                     foreach ($Package in $WingetWebList) {
-            
                         $ListAvailablePackages.Items.Add($Package.PackageName)
                     }
                 }
                 elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    CheckChoco
+                    $global:packageMgr = "Choco"
+                    #$global:Command  = $global:packageMgr + " install " + $Package
+                    Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
                     foreach ($Package in $ChocoWebList) {
-            
                         $ListAvailablePackages.Items.Add($Package.PackageName)
                     }
                 }
@@ -1373,7 +1410,28 @@ $btnBulkInstall.Add_Click({
             }
             })
         $btnPerformBlukInstallation.Add_click({
-
+            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                
+                foreach ($Package in $ListPackagesToInstall.Items) {
+             
+                 $command = $global:packageMgr + " install " + $Package
+                 Invoke-Expression $command | Out-Host | Write-Verbose
+                 Start-Sleep -Seconds 1
+                 [System.Console]::Beep(1111, 333)
+                }
+            }
+            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                foreach ($Package in $ListPackagesToInstall.Items) {
+                   $command = $global:packageMgr + " install " + $Package
+                   Invoke-Expression $command | Out-Host | Write-Verbose
+                   Start-Sleep -Seconds 1
+                   [System.Console]::Beep(1111, 333)
+                }
+            }
+            else { 
+                write-host "$global:packageMgr"
+                Write-Host "No Package Manager Selected"
+            }
             })
             $BulkInstaller.Add_Closing({
 
