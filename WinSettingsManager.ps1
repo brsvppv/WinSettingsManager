@@ -1434,7 +1434,7 @@ $btnBulkInstall.Add_Click({
             }
             })
             $BulkInstaller.Add_Closing({
-
+                $cbxPackageManager.SelectedIndex = $cbxBulkPackageManager.SelectedIndex 
             })
         $BulkInstaller.ShowDialog() | out-null
 
@@ -2180,6 +2180,7 @@ $btnInstallAll.Add_Click({
             Write-Host "No Package Manager Selected"
         }
     })
+
 $MainForm.ShowDialog() | out-null
 
 #Set-ExecutionPolicy Bypass -Scope Process -Force;  Invoke-Command {Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WinSettingsManager.ps1'))}
