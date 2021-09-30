@@ -1125,7 +1125,9 @@ $btnSystemSettings.Add_Click( {
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
-            $packageMgr = "Winget"
+            $global:packageMgr  = "winget"
+            $InstCMD =  'install -e --id'
+            $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
             Start-Sleep -Seconds 1
             $PackageArray = @(
                 [pscustomobject]@{PackageName = "Google.Chrome" }
@@ -1214,7 +1216,9 @@ $cbxPackageManager.Add_SelectionChanged( {
 
         }
         if ($cbxPackageManager.SelectedIndex -eq 2) {
-            $packageMgr = "Choco"
+            $global:packageMgr  = "winget"
+            $InstCMD =  'install -e --id'
+            $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
             $PackageArray = @(
                 [pscustomobject]@{PackageName = "googlechrome" };
                 [pscustomobject]@{PackageName = "opera" };
@@ -1290,158 +1294,7 @@ $cbxPackageManager.Add_SelectionChanged( {
         $global:PackageArray = $PackageArray
         return $packageArray
     })
-$btnBulkInstall.Add_Click({
-        [xml]$XAML = @"
-    <Window 
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
-<Grid>
-    <Label Name="lblPackageManager" Content="Custom List of Packages" Margin="0,8,0,0" VerticalAlignment="Top"/>
-    <ComboBox Name="cbxBulkPackageManager" Width="175" Height="22" VerticalAlignment="Top"  Margin="207,10,2,0" SelectedIndex="0">
-        <ComboBoxItem Content="No Package Manager Selected"/>
-        <ComboBoxItem Content="Winget"/>
-        <ComboBoxItem Content="Chocolyte"/>
-    </ComboBox>
 
-    <ListBox Name="ListAvailablePackages" Height="285" Margin="1,40,209,0" VerticalAlignment="Top" Width="174"/>
-    <ListBox Name="ListPackagesToInstall" Height="285" Margin="209,40,1,0" VerticalAlignment="Top" Width="174"/>
-
-    <Button Name="btnAddPackageToInstall" Content="&gt;" Height="135" Width="22" Margin="179,41,179,206" VerticalAlignment="Top" />
-    <Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="135" Width="22" Margin="179,189,179,35" VerticalAlignment="Top" />
-
-    <Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,350,5,0" VerticalAlignment="Top" Height="20"/>
-    <CheckBox Name="ChBPackageList" Content="Load All Available Packages" Margin="0,0,0,45" VerticalAlignment="Bottom" />
-</Grid>
-</Window>
-"@
-        #Read XAML
-        $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
-        try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
-        catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
-        # Store Form Objects In PowerShell
-        $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-        $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
-        $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
-            [pscustomobject]@{
-                PackageName = $ChockPackage
-            }
-        }
-        $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
-        $WingetWebList = foreach ($WingetPackage in $WingetWebList ) {
-            [pscustomobject]@{
-                PackageName = $WingetPackage
-            }
-        }
-        $BulkInstaller.Add_Loaded({
-            
-                $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
-
-                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                    foreach ($package in $WingetWebList) {
-                        $ListAvailablePackages.Items.Add($package.PackageName)
-                    }
-                }
-                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                    foreach ($package in $ChocoWebList) {
-                        $ListAvailablePackages.Items.Add($package.PackageName)
-                    }                   
-                }
-                else {
-                    Write-Host "NO PACKAGE MANAGER SELECTED"
-                }
-            })
-        $ChBPackageList.Add_Checked({
-                $ListAvailablePackages.Items.Clear()
-                $WingetAllPackages = "Winget Search"
-                $GetWingetPackages = Invoke-Expression ($WingetAllPackages)
-                foreach ($item in $GetWingetPackages){
-                    $ListAvailablePackages.Items.Add($Item) | Select-Object {$_.Name}
-                }
-            })
-        $ChBPackageList.Add_UnChecked({
-            })          
-        $cbxBulkPackageManager.Add_SelectionChanged({
-                $global:packageMgr
-                $global:CommandInstall 
-                $ListAvailablePackages.Items.Clear()
-                $ListPackagesToInstall.Items.Clear()
-                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                    CheckWinget
-                    $global:packageMgr = "winget"
-                    $InstCMD =  'install -e --id'
-                    $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
-                    foreach ($Package in $WingetWebList) {
-                        $ListAvailablePackages.Items.Add($Package.PackageName)
-                    }
-                }
-                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                    CheckChoco
-                    $global:packageMgr = "choco"
-                    $InstCMD =  'install'
-                    #$global:Command  = $global:packageMgr + " install " + $Package
-                    $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
-                    Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
-                    foreach ($Package in $ChocoWebList) {
-                        $ListAvailablePackages.Items.Add($Package.PackageName)
-                    }
-                }
-                else {
-                    Write-Host "Select Package Manager "
-                } 
-            })
-        $btnAddPackageToInstall.Add_click({
-                $SelectedPackge = $ListAvailablePackages.SelectedValue
-                if($SelectedPackge -ne $null){
-                $ListAvailablePackages.Items.Remove($SelectedPackge)
-                $ListPackagesToInstall.Items.Add($SelectedPackge)
-                }
-                else{
-                    Write-Host 'No Package Selected;'
-                }
-            })
-        $btnRemovePackgeFromInstall.Add_click({
-            $SelectedPackge = $ListPackagesToInstall.SelectedItem
-            if($SelectedPackge -ne $null){
-                $ListPackagesToInstall.Items.Remove($SelectedPackge)
-                $ListAvailablePackages.Items.Add($SelectedPackge)
-            }
-            else {
-                Write-host 'No packge slected'
-            }
-            })
-        $btnPerformBlukInstallation.Add_click({
-            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                
-                foreach ($Package in $ListPackagesToInstall.Items) {
-                    $command = $global:CommandInstall + $Package
-                    Invoke-Expression $command | Out-Host | Write-Verbose
-                    Start-Sleep -Seconds 1
-                    [System.Console]::Beep(1111, 333)
-                }
-            }
-            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                foreach ($Package in $ListPackagesToInstall.Items) {
-                    $command = $global:CommandInstall + $Package
-                    Invoke-Expression $command | Out-Host | Write-Verbose
-                    Start-Sleep -Seconds 1
-                    DoSpeak
-                    [System.Console]::Beep(1111, 333)
-                }
-            }
-            else { 
-                write-host "$global:packageMgr"
-                Write-Host "No Package Manager Selected"
-            }
-            })
-            $BulkInstaller.Add_Closing({
-                $cbxPackageManager.SelectedIndex = $cbxBulkPackageManager.SelectedIndex 
-            })
-        $BulkInstaller.ShowDialog() | out-null
-
-    })
 #EMpty Setting For NOW
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
@@ -1640,6 +1493,159 @@ $btnCreateRP.Add_Click( {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" -Name SystemRestorePointCreationFrequency -PropertyType DWord -Value 1440 -Force
 
     })
+############################ BUlK INSTALL
+$btnBulkInstall.Add_Click({
+    [xml]$XAML = @"
+<Window 
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
+<Grid>
+<Label Name="lblPackageManager" Content="Custom List of Packages" Margin="0,8,0,0" VerticalAlignment="Top"/>
+<ComboBox Name="cbxBulkPackageManager" Width="175" Height="22" VerticalAlignment="Top"  Margin="207,10,2,0" SelectedIndex="0">
+    <ComboBoxItem Content="No Package Manager Selected"/>
+    <ComboBoxItem Content="Winget"/>
+    <ComboBoxItem Content="Chocolyte"/>
+</ComboBox>
+
+<ListBox Name="ListAvailablePackages" Height="285" Margin="1,40,209,0" VerticalAlignment="Top" Width="174"/>
+<ListBox Name="ListPackagesToInstall" Height="285" Margin="209,40,1,0" VerticalAlignment="Top" Width="174"/>
+
+<Button Name="btnAddPackageToInstall" Content="&gt;" Height="135" Width="22" Margin="179,41,179,206" VerticalAlignment="Top" />
+<Button Name="btnRemovePackgeFromInstall" Content="&lt;" Height="135" Width="22" Margin="179,189,179,35" VerticalAlignment="Top" />
+
+<Button Name="btnPerformBlukInstallation" Content="Perform Bulk Installation" Margin="5,350,5,0" VerticalAlignment="Top" Height="20"/>
+<CheckBox Name="ChBPackageList" Content="Load All Available Packages" Margin="0,0,0,45" VerticalAlignment="Bottom" />
+</Grid>
+</Window>
+"@
+    #Read XAML
+    $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
+    try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
+    catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
+    # Store Form Objects In PowerShell
+    $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
+    $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
+    $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
+        [pscustomobject]@{
+            PackageName = $ChockPackage
+        }
+    }
+    $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
+    $WingetWebList = foreach ($WingetPackage in $WingetWebList ) {
+        [pscustomobject]@{
+            PackageName = $WingetPackage
+        }
+    }
+    $BulkInstaller.Add_Loaded({
+        
+            $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
+
+            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                foreach ($package in $WingetWebList) {
+                    $ListAvailablePackages.Items.Add($package.PackageName)
+                }
+            }
+            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                foreach ($package in $ChocoWebList) {
+                    $ListAvailablePackages.Items.Add($package.PackageName)
+                }                   
+            }
+            else {
+                Write-Host "NO PACKAGE MANAGER SELECTED"
+            }
+        })
+    $ChBPackageList.Add_Checked({
+            $ListAvailablePackages.Items.Clear()
+            $WingetAllPackages = "Winget Search"
+            $GetWingetPackages = Invoke-Expression ($WingetAllPackages)
+            foreach ($item in $GetWingetPackages){
+                $ListAvailablePackages.Items.Add($Item) | Select-Object {$_.Name}
+            }
+        })
+    $ChBPackageList.Add_UnChecked({
+        })          
+    $cbxBulkPackageManager.Add_SelectionChanged({
+            $global:packageMgr
+            $global:CommandInstall 
+            $ListAvailablePackages.Items.Clear()
+            $ListPackagesToInstall.Items.Clear()
+            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                CheckWinget
+                $global:packageMgr = "winget"
+                $InstCMD =  'install -e --id'
+                $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
+                foreach ($Package in $WingetWebList) {
+                    $ListAvailablePackages.Items.Add($Package.PackageName)
+                }
+            }
+            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                CheckChoco
+                $global:packageMgr = "choco"
+                $InstCMD =  'install'
+                #$global:Command  = $global:packageMgr + " install " + $Package
+                $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
+                Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
+                foreach ($Package in $ChocoWebList) {
+                    $ListAvailablePackages.Items.Add($Package.PackageName)
+                }
+            }
+            else {
+                Write-Host "Select Package Manager "
+            } 
+        })
+    $btnAddPackageToInstall.Add_click({
+            $SelectedPackge = $ListAvailablePackages.SelectedValue
+            if($SelectedPackge -ne $null){
+            $ListAvailablePackages.Items.Remove($SelectedPackge)
+            $ListPackagesToInstall.Items.Add($SelectedPackge)
+            }
+            else{
+                Write-Host 'No Package Selected;'
+            }
+        })
+    $btnRemovePackgeFromInstall.Add_click({
+        $SelectedPackge = $ListPackagesToInstall.SelectedItem
+        if($SelectedPackge -ne $null){
+            $ListPackagesToInstall.Items.Remove($SelectedPackge)
+            $ListAvailablePackages.Items.Add($SelectedPackge)
+        }
+        else {
+            Write-host 'No packge slected'
+        }
+        })
+    $btnPerformBlukInstallation.Add_click({
+        if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+            
+            foreach ($Package in $ListPackagesToInstall.Items) {
+                $command = $global:CommandInstall + $Package
+                Invoke-Expression $command | Out-Host | Write-Verbose
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
+            }
+        }
+        elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+            foreach ($Package in $ListPackagesToInstall.Items) {
+                $command = $global:CommandInstall + $Package
+                Invoke-Expression $command | Out-Host | Write-Verbose
+                Start-Sleep -Seconds 1
+                DoSpeak
+                [System.Console]::Beep(1111, 333)
+            }
+        }
+        else { 
+            write-host "$global:packageMgr"
+            Write-Host "No Package Manager Selected"
+        }
+        })
+        $BulkInstaller.Add_Closing({
+            $cbxPackageManager.SelectedIndex = $cbxBulkPackageManager.SelectedIndex 
+        })
+    $BulkInstaller.ShowDialog() | out-null
+
+})
 ################################## BROWSER INSTALL #################################
 $btnBrowserInstall.Add_Click( {
     
@@ -1666,10 +1672,18 @@ $btnBrowserInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333) | Write-Verbose
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
+               # $command = $global:CommandInstall + $sysAppPackage.PackageName
+                #Invoke-Expression $command | Out-Host
                 if ($?) {
+                    
                     DoSpeak
+                    Start-Sleep -Seconds 1
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
                 }
@@ -1705,8 +1719,12 @@ $btnPdfInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1757,8 +1775,10 @@ $btnChatInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak("$text")
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1794,8 +1814,10 @@ $btnTextEditorInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1832,8 +1854,10 @@ $btnImageInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1901,8 +1925,10 @@ $btnDevToolsInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1933,8 +1959,10 @@ $btnArhiveAppInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1970,8 +1998,10 @@ $btnFtpAppInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2005,8 +2035,10 @@ $btnVideoInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2045,8 +2077,10 @@ $btnPassMgrInstall.Add_Click( {
         else {
             Try {
                 Write-host "Installing" + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     Write-Host "Installed $sysAppPackage.PackageName" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
@@ -2087,8 +2121,10 @@ $btnVpnInstall.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"  + $sysAppPackage.PackageName
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2146,8 +2182,10 @@ $btnSysInstalls.Add_Click( {
         else {
             Try {
                 Write-host "$InstNotification"
-                $command = $global:packageMgr + " install " + $sysAppPackage.PackageName
-                Invoke-Expression $command | Out-Host         
+                $command = $global:CommandInstall + $sysAppPackage.PackageName
+                Invoke-Expression $command | Out-Host
+                Start-Sleep -Seconds 1
+                [System.Console]::Beep(1111, 333)         
                 Start-Sleep -Seconds 1
                 
                 if ($?) {
@@ -2165,7 +2203,7 @@ $btnSysInstalls.Add_Click( {
 $btnInstallAll.Add_Click({
         if ($cbxPackageManager.SelectedIndex -eq 1) {
             foreach ($Package in $PackageArray) {
-                $command = $global:packageMgr + " install " + $Package.PackageName
+                $command = $global:CommandInstall + $Package.PackageName
                 Invoke-Expression $command | Out-Host | Write-Verbose
                 Start-Sleep -Seconds 1
                 [System.Console]::Beep(1111, 333)
@@ -2173,7 +2211,7 @@ $btnInstallAll.Add_Click({
         }
         elseif ($cbxPackageManager.SelectedIndex -eq 2) {
             foreach ($Package in $PackageArray) {
-                $command = $global:packageMgr + " install " + $Package.PackageName
+                $command = $global:CommandInstall + $Package.PackageName
                 Invoke-Expression $command | Out-Host | Write-Verbose
                 Start-Sleep -Seconds 1
                 [System.Console]::Beep(1111, 333)
