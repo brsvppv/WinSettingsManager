@@ -1294,7 +1294,6 @@ $cbxPackageManager.Add_SelectionChanged( {
         $global:PackageArray = $PackageArray
         return $packageArray
     })
-
 #EMpty Setting For NOW
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
@@ -1493,7 +1492,7 @@ $btnCreateRP.Add_Click( {
         New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" -Name SystemRestorePointCreationFrequency -PropertyType DWord -Value 1440 -Force
 
     })
-############################ BUlK INSTALL
+############################ BUlK INSTALL ############################
 $btnBulkInstall.Add_Click({
     [xml]$XAML = @"
 <Window 
@@ -1640,11 +1639,10 @@ Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartu
             Write-Host "No Package Manager Selected"
         }
         })
-        $BulkInstaller.Add_Closing({
-            $cbxPackageManager.SelectedIndex = $cbxBulkPackageManager.SelectedIndex 
-        })
-    $BulkInstaller.ShowDialog() | out-null
+    $BulkInstaller.Add_Closing({
 
+    })
+    $BulkInstaller.ShowDialog() | out-null
 })
 ################################## BROWSER INSTALL #################################
 $btnBrowserInstall.Add_Click( {
