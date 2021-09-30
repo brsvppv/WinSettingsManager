@@ -254,8 +254,8 @@ $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 $global:PackageArray = $null
 $global:packageMgr = $null
-#$MainForm.Topmost = $True
 $sysAppPackage = $null
+#$MainForm.Topmost = $True
 $InstNotification = "Installing" + $sysAppPackage.PackageName
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
