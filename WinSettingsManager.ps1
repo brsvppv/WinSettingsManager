@@ -254,6 +254,7 @@ $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 $global:PackageArray = $null
 $global:packageMgr = $null
+$global:CommandInstall
 $sysAppPackage = $null
 #$MainForm.Topmost = $True
 $InstNotification = "Installing" + $sysAppPackage.PackageName
@@ -1216,8 +1217,8 @@ $cbxPackageManager.Add_SelectionChanged( {
 
         }
         if ($cbxPackageManager.SelectedIndex -eq 2) {
-            $global:packageMgr  = "winget"
-            $InstCMD =  'install -e --id'
+            $global:packageMgr  = "choco"
+            $InstCMD =  'install'
             $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
             $PackageArray = @(
                 [pscustomobject]@{PackageName = "googlechrome" };
