@@ -254,7 +254,7 @@ $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 $global:PackageArray = $null
 $global:packageMgr = $null
-$global:CommandInstall
+$global:CommandInstall = $null
 $sysAppPackage = $null
 #$MainForm.Topmost = $True
 $InstNotification = "Installing" + $sysAppPackage.PackageName
@@ -1293,6 +1293,7 @@ $cbxPackageManager.Add_SelectionChanged( {
         }
         $global:packageMgr = $packageMgr
         $global:PackageArray = $PackageArray
+        $global:CommandInstall = $global:CommandInstall
         return $packageArray
     })
 #EMpty Setting For NOW
