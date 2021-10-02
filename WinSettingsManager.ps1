@@ -20,7 +20,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         
         Title="Win Settings Manager" Height="500" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-          <Window.Resources>
+        <Window.Resources>
         <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFCA6A13" Offset="0" />
             <GradientStop Color="#FFF67D0C" Offset="0.2" />
@@ -161,6 +161,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="PyCharm"/>
             <ComboBoxItem Content="VS 2019 Enterprise"/>
             <ComboBoxItem Content="Azure Data Studio"/>
+            <ComboBoxItem Content="Azure Storage Explorer"/>
             <ComboBoxItem Content="SQL Management Studio"/>
             <ComboBoxItem Content="WinMerge"/>
             <ComboBoxItem Content="Git"/>
@@ -202,10 +203,11 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select System Package "/>
             <ComboBoxItem Content="Windows Terminal"/>
-            <ComboBoxItem Content="GnuPG Encryption"/>
-            <ComboBoxItem Content="Gpg4win"/>
             <ComboBoxItem Content="Everything"/>
             <ComboBoxItem Content="WizTree"/>
+            <ComboBoxItem Content="XMind"/>
+            <ComboBoxItem Content="Gpg4win"/>
+            <ComboBoxItem Content="GnuPG Encryption"/>
             <ComboBoxItem Content="Lenovo System Update"/>
             <ComboBoxItem Content="Intel Driver Assistant"/>
         </ComboBox>
@@ -300,10 +302,10 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <Button Name="btnRecent" Content=">" HorizontalAlignment="Left" Margin="490,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
 
         <!-- TEST COMBOBPX Settings  -->
-        <ComboBox Name="cbxTest00" HorizontalAlignment="Left" Margin="526,58,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+        <ComboBox Name="ShowHideTrayIcons" HorizontalAlignment="Left" Margin="526,58,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="Show Tray Icons"/>
+            <ComboBoxItem Content="Hide Try Icons"/>
         </ComboBox>
         <ComboBox Name="cbxTest01" HorizontalAlignment="Left" Margin="526,88,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
@@ -362,7 +364,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         </ComboBox>
 
         <!-- TEST BUTTONS -->
-        <Button Name="btnTest001" Content=">" HorizontalAlignment="Left" Margin="685,58,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTrayIcons" Content=">" HorizontalAlignment="Left" Margin="685,58,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnTest002" Content=">" HorizontalAlignment="Left" Margin="685,88,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnTest003" Content=">" HorizontalAlignment="Left" Margin="685,118,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnTest004" Content=">" HorizontalAlignment="Left" Margin="685,148,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
@@ -431,11 +433,15 @@ $timer_Tick = {
 $timer.Enabled = $True
 $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
+
 $global:PackageArray = $null
 $global:packageMgr = $null
 $global:CommandInstall = $null
 $sysAppPackage = $null
 #$MainForm.Topmost = $True
+$WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
+$ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
+
 $InstNotification = "Installing" + $sysAppPackage.PackageName
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
@@ -1164,13 +1170,12 @@ function AddRunAsDifferentUserInContextMenu {
     }
     Write-Host "Finished" -ForegroundColor Magenta
 }
-Function ShowTrayIcons{
+Function ShowTrayIcons {
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1
 }
-Function HideTrayIcons{
+Function HideTrayIcons {
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
 }
-
 function DisableIP6 {
     Get-NetAdapter -Name *
     $adapters = Get-NetAdapterBinding -ComponentID ms_tcpip6
@@ -1185,32 +1190,32 @@ Function DoSpeak {
     $object.Speak($Text)
     [System.Console]::Beep(1111, 333)
 }
-Function CheckWinget{
+Function CheckWinget {
     $checkWinget = (Invoke-Expression "winget -v")
-            if (-not($checkWinget)) {
-                Start-Sleep -Seconds 1
-                Write-Host "winget is not found, installing it right now." -ForegroundColor 'Magenta'
-                $asset = Invoke-RestMethod -Method Get -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' | ForEach-Object assets | Where-Object name -like "*.msixbundle"
-                $output = $PSScriptRoot + "\winget-latest.appxbundle"
-                Write-Host "Downloading winget..."
-                Write-Host "Please Wait." -ForegroundColor "Green"
-                Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
-                Start-Sleep -Seconds 1
-                Write-Host "Installing Winget Package"
-                Write-host "Finilizing" -ForegroundColor "Green"
-                Add-AppxPackage -Path $output  | Write-Verbose
+    if (-not($checkWinget)) {
+        Start-Sleep -Seconds 1
+        Write-Host "winget is not found, installing it right now." -ForegroundColor 'Magenta'
+        $asset = Invoke-RestMethod -Method Get -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' | ForEach-Object assets | Where-Object name -like "*.msixbundle"
+        $output = $PSScriptRoot + "\winget-latest.appxbundle"
+        Write-Host "Downloading winget..."
+        Write-Host "Please Wait." -ForegroundColor "Green"
+        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
+        Start-Sleep -Seconds 1
+        Write-Host "Installing Winget Package"
+        Write-host "Finilizing" -ForegroundColor "Green"
+        Add-AppxPackage -Path $output  | Write-Verbose
                 
-                Write-Host "Cleanup..."
-                if (Test-Path -Path $output) {
-                    Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
-                }
-            }
-            else {      
-                Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
-            }
+        Write-Host "Cleanup..."
+        if (Test-Path -Path $output) {
+            Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
+        }
+    }
+    else {      
+        Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
+    }
             
 }
-function CheckChoco{
+function CheckChoco {
     $checkChoco = (Invoke-Expression "choco -v")
     if (-not($checkChoco)) {
         Start-Sleep -Seconds "1"
@@ -1312,68 +1317,15 @@ $btnSystemSettings.Add_Click( {
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
-            $global:packageMgr  = "winget"
-            $InstCMD =  'install -e --id'
-            $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
+            $global:packageMgr = "winget"
+            $InstCMD = 'install -e --id'
+            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
             Start-Sleep -Seconds 1
-            $PackageArray = @(
-                [pscustomobject]@{PackageName = "Google.Chrome" }
-                [pscustomobject]@{PackageName = "Opera.Opera" }
-                [pscustomobject]@{PackageName = "Mozilla.Firefox" }
-                [pscustomobject]@{PackageName = "Adobe.AdobeAcrobatReaderDC" }
-                [pscustomobject]@{PackageName = "SumatraPDF.SumatraPDF" }
-                [pscustomobject]@{PackageName = "Foxit.FoxitReader" }
-                [pscustomobject]@{PackageName = "Microsoft.Teams" }
-                [pscustomobject]@{PackageName = "Microsoft.Skype" }
-                [pscustomobject]@{PackageName = "Zoom.Zoom" }
-                [pscustomobject]@{PackageName = "Telegram.TelegramDesktop" }
-                [pscustomobject]@{PackageName = "OpenWhisperSystems.Signal" }
-                [pscustomobject]@{PackageName = "Viber.Viber" }
-                [pscustomobject]@{PackageName = "Notepad++.Notepad++" }
-                [pscustomobject]@{PackageName = "GitHub.Atom" }
-                [pscustomobject]@{PackageName = "Microsoft.Office" }
-                [pscustomobject]@{PackageName = "IrfanSkiljan.IrfanView" }
-                [pscustomobject]@{PackageName = "GIMP.GIMP" }
-                [pscustomobject]@{PackageName = "ShareX.ShareX" }
-                [pscustomobject]@{PackageName = "Microsoft.VisualStudioCode" }
-                [pscustomobject]@{PackageName = "JetBrains.PyCharm.Community" }
-                [pscustomobject]@{PackageName = "Microsoft.VisualStudio.2019.Enterprise" }
-                [pscustomobject]@{PackageName = "Microsoft.AzureDataStudio" }
-                [pscustomobject]@{PackageName = "Microsoft.SQLServerManagementStudio" }
-                [pscustomobject]@{PackageName = "WinMerge.WinMerge" }
-                [pscustomobject]@{PackageName = "Git.Git" }
-                [pscustomobject]@{PackageName = "Microsoft.GitCredentialManagerCore" }
-                [pscustomobject]@{PackageName = "Docker.DockerDesktop" }
-                [pscustomobject]@{PackageName = "7zip.7zip" }
-                [pscustomobject]@{PackageName = "Bandisoft.Bandizip" }
-                [pscustomobject]@{PackageName = "Giorgiotani.Peazip" }
-                [pscustomobject]@{PackageName = "TimKosse.FileZillaClient" }
-                [pscustomobject]@{PackageName = "WinSCP.WinSCP" }
-                [pscustomobject]@{PackageName = "Iterate.Cyberduck" }
-                [pscustomobject]@{PackageName = "VideoLAN.VLC" }
-                [pscustomobject]@{PackageName = "VentisMedia.MediaMonkey" }
-                [pscustomobject]@{PackageName = "MPC-HC.MPC-HC" }
-                [pscustomobject]@{PackageName = "KeePassXCTeam.KeePassXC" }
-                [pscustomobject]@{PackageName = "KeeWeb.KeeWeb" }
-                [pscustomobject]@{PackageName = "LogMeIn.LastPass" }
-                [pscustomobject]@{PackageName = "Bitwarden.Bitwarden" }
-                [pscustomobject]@{PackageName = "AgileBits.1Password" }
-                [pscustomobject]@{PackageName = "OpenVPNTechnologies.OpenVPN" }
-                [pscustomobject]@{PackageName = "WireGuard.WireGuard" }
-                [pscustomobject]@{PackageName = "LogMeIn.Hamachi" }
-                [pscustomobject]@{PackageName = "Fortinet.FortiClientVPN" }
-                [pscustomobject]@{PackageName = "SonicWALL.GlobalVPN" }
-                [pscustomobject]@{PackageName = "Lenovo.SystemUpdate" }
-                [pscustomobject]@{PackageName = "Microsoft.WindowsTerminal" }
-                [pscustomobject]@{PackageName = "Intel.IntelDriverAndSupportAssistant" }  
-                [pscustomobject]@{PackageName = "GnuPG.GnuPG" }
-                [pscustomobject]@{PackageName = "GnuPG.Gpg4win" }
-                [pscustomobject]@{PackageName = "AntibodySoftware.WizTree" }
-                [pscustomobject]@{PackageName = "Flameshot.Flameshot" }
-                [pscustomobject]@{PackageName = "voidtools.Everything" }  
-                [pscustomobject]@{PackageName = "Microsoft.AzureStorageExplorer" }
-                
-            )
+            $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
+                [pscustomobject]@{
+                    PackageName = $WingetPackage
+                    }
+                }
             $checkWinget = (Invoke-Expression "winget -v")
             if (-not($checkWinget)) {
                 Start-Sleep -Seconds 1
@@ -1403,65 +1355,14 @@ $cbxPackageManager.Add_SelectionChanged( {
 
         }
         if ($cbxPackageManager.SelectedIndex -eq 2) {
-            $global:packageMgr  = "choco"
-            $InstCMD =  'install'
-            $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
-            $PackageArray = @(
-                [pscustomobject]@{PackageName = "googlechrome" };
-                [pscustomobject]@{PackageName = "opera" };
-                [pscustomobject]@{PackageName = "firefox" };
-                [pscustomobject]@{PackageName = "adobereader" };
-                [pscustomobject]@{PackageName = "sumatrapdf" };
-                [pscustomobject]@{PackageName = "foxitreader" };
-                [pscustomobject]@{PackageName = "microsoft-teams" };
-                [pscustomobject]@{PackageName = "skype" };
-                [pscustomobject]@{PackageName = "zoom" };
-                [pscustomobject]@{PackageName = "telegram" };
-                [pscustomobject]@{PackageName = "signal" };
-                [pscustomobject]@{PackageName = "viber" };
-                [pscustomobject]@{PackageName = "notepadplusplus" };
-                [pscustomobject]@{PackageName = "atom" };
-                [pscustomobject]@{PackageName = "office365business" };
-                [pscustomobject]@{PackageName = "irfanview" };
-                [pscustomobject]@{PackageName = "gimp" };
-                [pscustomobject]@{PackageName = "sharex" };
-                [pscustomobject]@{PackageName = "pycharm-community" };
-                [pscustomobject]@{PackageName = "vscode" };
-                [pscustomobject]@{PackageName = "visualstudio2019enterprise" };
-                [pscustomobject]@{PackageName = "azure-data-studio" };
-                [pscustomobject]@{PackageName = "sql-server-management-studio" };
-                [pscustomobject]@{PackageName = "winmerge" };
-                [pscustomobject]@{PackageName = "git" };
-                [pscustomobject]@{PackageName = "git-credential-manager-for-windows" };
-                [pscustomobject]@{PackageName = "docker-desktop" };
-                [pscustomobject]@{PackageName = "7zip" };
-                [pscustomobject]@{PackageName = "bandizip" };
-                [pscustomobject]@{PackageName = "peazip" };
-                [pscustomobject]@{PackageName = "filezilla" };
-                [pscustomobject]@{PackageName = "winscp" };
-                [pscustomobject]@{PackageName = "cyberduck" };
-                [pscustomobject]@{PackageName = "vlc" };
-                [pscustomobject]@{PackageName = "mediamonkey" };
-                [pscustomobject]@{PackageName = "mpc-hc" };
-                [pscustomobject]@{PackageName = "keepassxc" };
-                [pscustomobject]@{PackageName = "keeweb" };
-                [pscustomobject]@{PackageName = "lastpass" };
-                [pscustomobject]@{PackageName = "bitwarden" };
-                [pscustomobject]@{PackageName = "1password" };
-                [pscustomobject]@{PackageName = "openvpn" };
-                [pscustomobject]@{PackageName = "wireguard" };
-                [pscustomobject]@{PackageName = "forticlientvpn" };
-                [pscustomobject]@{PackageName = "openconnect-gui" };
-                [pscustomobject]@{PackageName = "lenovo-thinkvantage-system-update" };
-                [pscustomobject]@{PackageName = "microsoft-windows-terminal" };
-                [pscustomobject]@{PackageName = "intel-dsa" };
-                [pscustomobject]@{PackageName = "GnuPG" };
-                [pscustomobject]@{PackageName = "WizTree" };
-                [pscustomobject]@{PackageName = "gpg4win" };
-                [pscustomobject]@{PackageName = "flameshot" };
-                [pscustomobject]@{PackageName = "Everything" };
-                [pscustomobject]@{PackageName = "microsoftazurestorageexplorer" };
-            )
+            $global:packageMgr = "choco"
+            $InstCMD = 'install'
+            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+            $PackageArray = foreach ($ChockPackage in $ChocoWebList ) {
+                [pscustomobject]@{
+                    PackageName = $ChockPackage
+                    }
+                }
             $checkChoco = (Invoke-Expression "choco -v")
             if (-not($checkChoco)) {
                 Start-Sleep -Seconds "1"
@@ -1682,7 +1583,7 @@ $btnCreateRP.Add_Click( {
     })
 ############################ BUlK INSTALL ############################
 $btnBulkInstall.Add_Click({
-    [xml]$XAML = @"
+        [xml]$XAML = @"
 <Window 
 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -1708,130 +1609,130 @@ Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartu
 </Grid>
 </Window>
 "@
-    #Read XAML
-    $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
-    try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
-    catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
-    # Store Form Objects In PowerShell
-    $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
-    $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
-    $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
-        [pscustomobject]@{
-            PackageName = $ChockPackage
+        #Read XAML
+        $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
+        try { $BulkInstaller = [Windows.Markup.XamlReader]::Load( $reader ) }
+        catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
+        # Store Form Objects In PowerShell
+        $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $BulkInstaller.FindName($_.Name) }
+        $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
+        $ChocoWebList = foreach ($ChockPackage in $ChocoWebList ) {
+            [pscustomobject]@{
+                PackageName = $ChockPackage
+            }
         }
-    }
-    $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
-    $WingetWebList = foreach ($WingetPackage in $WingetWebList ) {
-        [pscustomobject]@{
-            PackageName = $WingetPackage
+        $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
+        $WingetWebList = foreach ($WingetPackage in $WingetWebList ) {
+            [pscustomobject]@{
+                PackageName = $WingetPackage
+            }
         }
-    }
-    $BulkInstaller.Add_Loaded({
+        $BulkInstaller.Add_Loaded({
         
-            $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
+                $cbxBulkPackageManager.SelectedIndex = $cbxPackageManager.SelectedIndex
 
-            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                foreach ($package in $WingetWebList) {
-                    $ListAvailablePackages.Items.Add($package.PackageName)
+                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                    foreach ($package in $WingetWebList) {
+                        $ListAvailablePackages.Items.Add($package.PackageName)
+                    }
                 }
-            }
-            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                foreach ($package in $ChocoWebList) {
-                    $ListAvailablePackages.Items.Add($package.PackageName)
-                }                   
-            }
-            else {
-                Write-Host "NO PACKAGE MANAGER SELECTED"
-            }
-        })
-    $ChBPackageList.Add_Checked({
-            $ListAvailablePackages.Items.Clear()
-            $WingetAllPackages = "Winget Search"
-            $GetWingetPackages = Invoke-Expression ($WingetAllPackages)
-            foreach ($item in $GetWingetPackages){
-                $ListAvailablePackages.Items.Add($Item) | Select-Object {$_.Name}
-            }
-        })
-    $ChBPackageList.Add_UnChecked({
-        })          
-    $cbxBulkPackageManager.Add_SelectionChanged({
-            $global:packageMgr
-            $global:CommandInstall 
-            $ListAvailablePackages.Items.Clear()
-            $ListPackagesToInstall.Items.Clear()
-            if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
-                CheckWinget
-                $global:packageMgr = "winget"
-                $InstCMD =  'install -e --id'
-                $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
-                foreach ($Package in $WingetWebList) {
-                    $ListAvailablePackages.Items.Add($Package.PackageName)
+                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    foreach ($package in $ChocoWebList) {
+                        $ListAvailablePackages.Items.Add($package.PackageName)
+                    }                   
                 }
-            }
-            elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-                CheckChoco
-                $global:packageMgr = "choco"
-                $InstCMD =  'install'
-                #$global:Command  = $global:packageMgr + " install " + $Package
-                $global:CommandInstall = $global:packageMgr + " " +  $InstCMD + " "
-                Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
-                foreach ($Package in $ChocoWebList) {
-                    $ListAvailablePackages.Items.Add($Package.PackageName)
+                else {
+                    Write-Host "NO PACKAGE MANAGER SELECTED"
                 }
-            }
-            else {
-                Write-Host "Select Package Manager "
-            } 
-        })
-    $btnAddPackageToInstall.Add_click({
-            $SelectedPackge = $ListAvailablePackages.SelectedValue
-            if($SelectedPackge -ne $null){
-            $ListAvailablePackages.Items.Remove($SelectedPackge)
-            $ListPackagesToInstall.Items.Add($SelectedPackge)
-            }
-            else{
-                Write-Host 'No Package Selected;'
-            }
-        })
-    $btnRemovePackgeFromInstall.Add_click({
-        $SelectedPackge = $ListPackagesToInstall.SelectedItem
-        if($SelectedPackge -ne $null){
-            $ListPackagesToInstall.Items.Remove($SelectedPackge)
-            $ListAvailablePackages.Items.Add($SelectedPackge)
-        }
-        else {
-            Write-host 'No packge slected'
-        }
-        })
-    $btnPerformBlukInstallation.Add_click({
-        if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+            })
+        $ChBPackageList.Add_Checked({
+                $ListAvailablePackages.Items.Clear()
+                $WingetAllPackages = "Winget Search"
+                $GetWingetPackages = Invoke-Expression ($WingetAllPackages)
+                foreach ($item in $GetWingetPackages) {
+                    $ListAvailablePackages.Items.Add($Item) | Select-Object { $_.Name }
+                }
+            })
+        $ChBPackageList.Add_UnChecked({
+            })          
+        $cbxBulkPackageManager.Add_SelectionChanged({
+                $global:packageMgr
+                $global:CommandInstall 
+                $ListAvailablePackages.Items.Clear()
+                $ListPackagesToInstall.Items.Clear()
+                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
+                    CheckWinget
+                    $global:packageMgr = "winget"
+                    $InstCMD = 'install -e --id'
+                    $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+                    foreach ($Package in $WingetWebList) {
+                        $ListAvailablePackages.Items.Add($Package.PackageName)
+                    }
+                }
+                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    CheckChoco
+                    $global:packageMgr = "choco"
+                    $InstCMD = 'install'
+                    #$global:Command  = $global:packageMgr + " install " + $Package
+                    $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+                    Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
+                    foreach ($Package in $ChocoWebList) {
+                        $ListAvailablePackages.Items.Add($Package.PackageName)
+                    }
+                }
+                else {
+                    Write-Host "Select Package Manager "
+                } 
+            })
+        $btnAddPackageToInstall.Add_click({
+                $SelectedPackge = $ListAvailablePackages.SelectedValue
+                if ($SelectedPackge -ne $null) {
+                    $ListAvailablePackages.Items.Remove($SelectedPackge)
+                    $ListPackagesToInstall.Items.Add($SelectedPackge)
+                }
+                else {
+                    Write-Host 'No Package Selected;'
+                }
+            })
+        $btnRemovePackgeFromInstall.Add_click({
+                $SelectedPackge = $ListPackagesToInstall.SelectedItem
+                if ($SelectedPackge -ne $null) {
+                    $ListPackagesToInstall.Items.Remove($SelectedPackge)
+                    $ListAvailablePackages.Items.Add($SelectedPackge)
+                }
+                else {
+                    Write-host 'No packge slected'
+                }
+            })
+        $btnPerformBlukInstallation.Add_click({
+                if ($cbxBulkPackageManager.SelectedIndex -eq 1) {
             
-            foreach ($Package in $ListPackagesToInstall.Items) {
-                $command = $global:CommandInstall + $Package
-                Invoke-Expression $command | Out-Host | Write-Verbose
-                Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
-            }
-        }
-        elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
-            foreach ($Package in $ListPackagesToInstall.Items) {
-                $command = $global:CommandInstall + $Package
-                Invoke-Expression $command | Out-Host | Write-Verbose
-                Start-Sleep -Seconds 1
-                DoSpeak
-                [System.Console]::Beep(1111, 333)
-            }
-        }
-        else { 
-            write-host "$global:packageMgr"
-            Write-Host "No Package Manager Selected"
-        }
-        })
-    $BulkInstaller.Add_Closing({
+                    foreach ($Package in $ListPackagesToInstall.Items) {
+                        $command = $global:CommandInstall + $Package
+                        Invoke-Expression $command | Out-Host | Write-Verbose
+                        Start-Sleep -Seconds 1
+                        [System.Console]::Beep(1111, 333)
+                    }
+                }
+                elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
+                    foreach ($Package in $ListPackagesToInstall.Items) {
+                        $command = $global:CommandInstall + $Package
+                        Invoke-Expression $command | Out-Host | Write-Verbose
+                        Start-Sleep -Seconds 1
+                        DoSpeak
+                        [System.Console]::Beep(1111, 333)
+                    }
+                }
+                else { 
+                    write-host "$global:packageMgr"
+                    Write-Host "No Package Manager Selected"
+                }
+            })
+        $BulkInstaller.Add_Closing({
 
+            })
+        $BulkInstaller.ShowDialog() | out-null
     })
-    $BulkInstaller.ShowDialog() | out-null
-})
 ################################## BROWSER INSTALL #################################
 $btnBrowserInstall.Add_Click( {
     
@@ -1864,10 +1765,9 @@ $btnBrowserInstall.Add_Click( {
                 [System.Console]::Beep(1111, 333) | Write-Verbose
                 Start-Sleep -Seconds 1
                 [System.Console]::Beep(1111, 333)
-               # $command = $global:CommandInstall + $sysAppPackage.PackageName
+                # $command = $global:CommandInstall + $sysAppPackage.PackageName
                 #Invoke-Expression $command | Out-Host
                 if ($?) {
-                    
                     DoSpeak
                     Start-Sleep -Seconds 1
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2356,11 +2256,13 @@ $btnSysInstalls.Add_Click( {
             #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
         }
         if ($cbxSelectSystemApps.Text -eq "Everything") {
-
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Everything*" }
             #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
         }
-        
+        if ($cbxSelectSystemApps.Text -eq "XMind")
+        {
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*XMind*" }
+        }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
             #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
@@ -2406,6 +2308,30 @@ $btnInstallAll.Add_Click({
         else { 
             Write-Host "No Package Manager Selected"
         }
+    })
+
+################################# COMBOBOXES COLUMN 3 #####################################
+$btnTrayIcons.Add_Click({
+        if ($ShowHideTrayIcons -eq 1) {
+            try {
+                ShowTrayIcons
+            }
+            catch {
+                [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
+            }
+        }
+        elseif ($ShowHideTrayIcons -eq 2) {
+            try {
+                HideTrayIcons
+            }
+            catch {
+                [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
+            }
+        }
+        else {
+            [System.Windows.MessageBox]::Show("No Action Selected:  $_", 'No Action', 'OK', 'Info')
+        }
+        
     })
 
 $MainForm.ShowDialog() | out-null
