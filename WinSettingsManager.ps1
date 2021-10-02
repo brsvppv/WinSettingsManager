@@ -116,24 +116,24 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     </Window.Resources>
     <Grid>
         <!-- Avaivable Packages to Install Registry Settings  -->
-        <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Width="180" SelectedIndex="0" Background="Black">
+        <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Height="22" Width="180" SelectedIndex="0" Background="Black">
             <ComboBoxItem Content="Select Package Manager"/>
             <ComboBoxItem Content="Winget"/>
             <ComboBoxItem Content="Chocolyte"/>
         </ComboBox>
-        <ComboBox Name="cbxBrowsers" HorizontalAlignment="Left" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxBrowsers" HorizontalAlignment="Left" Margin="20,59,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Browser"/>
             <ComboBoxItem Content="Google Chrome"/>
             <ComboBoxItem Content="Opera Browser"/>
             <ComboBoxItem Content="Mozilla Firefox"/>
         </ComboBox>
-        <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select PDF Reader"/>
             <ComboBoxItem Content="Adobe Acrobat"/>
             <ComboBoxItem Content="Sumatra PDF"/>
             <ComboBoxItem Content="Foxit Reader"/>
         </ComboBox>
-        <ComboBox Name="cbxChatApps" HorizontalAlignment="Left" Margin="20,119,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxChatApps" HorizontalAlignment="Left" Margin="20,119,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Chat App"/>
             <ComboBoxItem Content="Microsoft Teams"/>
             <ComboBoxItem Content="Microsoft Skype"/>
@@ -142,20 +142,20 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="Signal"/>
             <ComboBoxItem Content="Viber"/>
         </ComboBox>
-        <ComboBox Name="cbxEditorApps" HorizontalAlignment="Left" Margin="20,149,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxEditorApps" HorizontalAlignment="Left" Margin="20,149,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Text Editor"/>
             <ComboBoxItem Content="Notepad++"/>
             <ComboBoxItem Content="Atom"/>
             <ComboBoxItem Content="Microsoft Office"/>
         </ComboBox>
-        <ComboBox Name="cbxImageViwers" HorizontalAlignment="Left" Margin="20,179,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxImageViwers" HorizontalAlignment="Left" Margin="20,179,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Image Viewer"/>
             <ComboBoxItem Content="Flameshot"/>
             <ComboBoxItem Content="GIMP"/>
             <ComboBoxItem Content="IrfanView"/>
             <ComboBoxItem Content="ShareX"/>
         </ComboBox>
-        <ComboBox Name="cbxDevTools" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxDevTools" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Dev Tools"/>
             <ComboBoxItem Content="Visual Studio Code"/>
             <ComboBoxItem Content="PyCharm"/>
@@ -168,25 +168,25 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="GitCredManager"/>
             <ComboBoxItem Content="Docker Desktop"/>
         </ComboBox>
-        <ComboBox Name="cbxArchiveApps" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxArchiveApps" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Archive App"/>
             <ComboBoxItem Content="7 Zip Manager"/>
             <ComboBoxItem Content="Bandizip"/>
             <ComboBoxItem Content="PeaZip"/>
         </ComboBox>
-        <ComboBox Name="cbxFtpApps" HorizontalAlignment="Left" Margin="20,269,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxFtpApps" HorizontalAlignment="Left" Margin="20,269,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select FTP App"/>
             <ComboBoxItem Content="FileZilla"/>
             <ComboBoxItem Content="WinSCP"/>
             <ComboBoxItem Content="Cyberduck"/>
         </ComboBox>
-        <ComboBox Name="cbxVideoApps" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxVideoApps" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Video Player"/>
             <ComboBoxItem Content="VLC"/>
             <ComboBoxItem Content="MediaMonkey"/>
             <ComboBoxItem Content="Media Player Classic"/>
         </ComboBox>
-        <ComboBox Name="cbxPassMgr" HorizontalAlignment="Left" Margin="20,328,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxPassMgr" HorizontalAlignment="Left" Margin="20,328,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select Pass Manager"/>
             <ComboBoxItem Content="KeePassXC"/>
             <ComboBoxItem Content="KeeWeb"/>
@@ -194,13 +194,13 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="Bitwarden"/>
             <ComboBoxItem Content="1Password"/>
         </ComboBox>
-        <ComboBox Name="cbxVPN" HorizontalAlignment="Left" Margin="20,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxVPN" HorizontalAlignment="Left" Margin="20,358,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select VPN"/>
             <ComboBoxItem Content="OpenVPNTechnologies"/>
             <ComboBoxItem Content="WireGuard"/>
             <ComboBoxItem Content="FortiClient VPN"/>
         </ComboBox>
-        <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+        <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select System Package "/>
             <ComboBoxItem Content="Windows Terminal"/>
             <ComboBoxItem Content="Everything"/>
@@ -309,58 +309,58 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         </ComboBox>
         <ComboBox Name="cbxTest01" HorizontalAlignment="Left" Margin="526,88,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest0" HorizontalAlignment="Left" Margin="526,118,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest1" HorizontalAlignment="Left" Margin="526,148,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest2" HorizontalAlignment="Left" Margin="526,178,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest3" HorizontalAlignment="Left" Margin="526,208,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest4" HorizontalAlignment="Left" Margin="526,238,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest5" HorizontalAlignment="Left" Margin="526,268,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest6" HorizontalAlignment="Left" Margin="526,298,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest7" HorizontalAlignment="Left" Margin="526,328,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest8" HorizontalAlignment="Left" Margin="526,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
         <ComboBox Name="cbxTest9" HorizontalAlignment="Left" Margin="526,388,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select"/>
-            <ComboBoxItem Content="ShowRecentShortcuts"/>
-            <ComboBoxItem Content="HideRecentShortcuts"/>
+            <ComboBoxItem Content="TEST"/>
+            <ComboBoxItem Content="TEST"/>
         </ComboBox>
 
         <!-- TEST BUTTONS -->
@@ -413,6 +413,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
         <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
         <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,414,0,0" Height="21" VerticalAlignment="Top" Width="94" />
+        <Button Name="btnViewList" Content="View Pacakge List  " HorizontalAlignment="Left" Margin="115,414,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
 
     </Grid>
 </Window>
@@ -1314,6 +1315,7 @@ $btnSystemSettings.Add_Click( {
         $Settings.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
     })
+
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
@@ -1383,6 +1385,52 @@ $cbxPackageManager.Add_SelectionChanged( {
         $global:CommandInstall = $global:CommandInstall
         return $packageArray
     })
+$btnViewList.Add_Click({
+        [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
+        [void][Reflection.Assembly]::LoadWithPartialName('System.Speech')
+        [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
+        Add-Type -AssemblyName System.Windows.Forms
+        Add-Type -AssemblyName System.Speech
+        Add-Type -AssemblyName PresentationCore, PresentationFramework
+        [xml]$XAML = @"
+        <Window 
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                Title="Package List Viewer  " Height="400" Width="350" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" ShowInTaskbar="True">
+                <Grid Margin="5,5,5,5">
+                    <ListBox Name="ListAvailablePackages" Width="315" Margin="0,1,0,30"  HorizontalAlignment="Center" IsEnabled="True"/>
+                    <Button Name="btnInsert" Content="Insert" Margin="180,328,83,0" VerticalAlignment="Top" Height="22"/>
+                    <TextBox Name="textBox" HorizontalAlignment="Left" Margin="5,328,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Height="22" Width="170"/>
+                    <CheckBox Name="chkbState" Content="Unlock" HorizontalAlignment="Left" Margin="260,333,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                </Grid>
+            </Window>
+"@
+        
+            #Read XAML
+            $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
+            try { $PackageViewForm = [Windows.Markup.XamlReader]::Load( $reader ) }
+            catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
+            # Store Form Objects In PowerShell
+            $xaml.SelectNodes("//*[@Name]") | ForEach-Object { Set-Variable -Name ($_.Name) -Value $PackageViewForm.FindName($_.Name) }
+            foreach ($item in $global:PackageArray) {
+                $ListAvailablePackages.Items.Add($Item.PackageName) #| Select-Object { $_.Name }
+            }
+            $chkbState.Add_Checked({
+                $ListAvailablePackages.Items.Clear()
+
+                foreach ($item in $global:PackageArray) {
+                    $ListAvailablePackages.Items.Add($Item) #| Select-Object { $_.Name }
+                }
+            })
+            $chkbState.Add_UnChecked({
+                $ListAvailablePackages.Clear()
+                })   
+                
+            $PackageViewForm.ShowDialog() | out-null
+        
+        })
 #EMpty Setting For NOW
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
