@@ -1171,10 +1171,10 @@ function AddRunAsDifferentUserInContextMenu {
     Write-Host "Finished" -ForegroundColor Magenta
 }
 Function ShowTrayIcons {
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1 -Verbose
 }
 Function HideTrayIcons {
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0 -Verbose
 }
 function DisableIP6 {
     Get-NetAdapter -Name *
@@ -2291,17 +2291,17 @@ $btnInstallAll.Add_Click({
 
 ################################# COMBOBOXES COLUMN 3 #####################################
 $btnTrayIcons.Add_Click({
-        if ($ShowHideTrayIcons -eq 1) {
+        if ($ShowHideTrayIcons.SelectedIndex -eq 1) {
             try {
-                ShowTrayIcons
+                ShowTrayIcons 
             }
             catch {
                 [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
             }
         }
-        elseif ($ShowHideTrayIcons -eq 2) {
+        elseif ($ShowHideTrayIcons.SelectedIndex -eq 2) {
             try {
-                HideTrayIcons
+                HideTrayIcons 
             }
             catch {
                 [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
