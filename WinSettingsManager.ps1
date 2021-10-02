@@ -19,222 +19,401 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         
-        Title="Win Settings Manager" Height="460" Width="655" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
-        <Grid>
-            <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,2,0,0" VerticalAlignment="Top" Width="180" SelectedIndex="0" Background="Black">
-                <ComboBoxItem Content="Select Package Manager"/>
-                <ComboBoxItem Content="Winget"/>
-                <ComboBoxItem Content="Chocolyte"/>
-            </ComboBox>
-            <ComboBox Name="cbxBrowsers" HorizontalAlignment="Left" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Browser"/>
-                <ComboBoxItem Content="Google Chrome"/>
-                <ComboBoxItem Content="Opera Browser"/>
-                <ComboBoxItem Content="Mozilla Firefox"/>
-            </ComboBox>
-            <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select PDF Reader"/>
-                <ComboBoxItem Content="Adobe Acrobat"/>
-                <ComboBoxItem Content="Sumatra PDF"/>
-                <ComboBoxItem Content="Foxit Reader"/>
-            </ComboBox>
-            <ComboBox Name="cbxChatApps" HorizontalAlignment="Left" Margin="20,119,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Chat App"/>
-                <ComboBoxItem Content="Microsoft Teams"/>
-                <ComboBoxItem Content="Microsoft Skype"/>
-                <ComboBoxItem Content="Zoom"/>
-                <ComboBoxItem Content="Telegram"/>
-                <ComboBoxItem Content="Signal"/>
-                <ComboBoxItem Content="Viber"/>
-            </ComboBox>
-            <ComboBox Name="cbxEditorApps" HorizontalAlignment="Left" Margin="20,149,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Text Editor"/>
-                <ComboBoxItem Content="Notepad++"/>
-                <ComboBoxItem Content="Atom"/>
-                <ComboBoxItem Content="Microsoft Office"/>
-            </ComboBox>
-            <ComboBox Name="cbxImageViwers" HorizontalAlignment="Left" Margin="20,179,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Image Viewer"/>
-                <ComboBoxItem Content="Flameshot"/>
-                <ComboBoxItem Content="GIMP"/>
-                <ComboBoxItem Content="IrfanView"/>
-                <ComboBoxItem Content="ShareX"/>
-            </ComboBox>
-            <ComboBox Name="cbxDevTools" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Dev Tools"/>
-                <ComboBoxItem Content="Visual Studio Code"/>
-                <ComboBoxItem Content="PyCharm"/>
-                <ComboBoxItem Content="VS 2019 Enterprise"/>
-                <ComboBoxItem Content="Azure Data Studio"/>
-                <ComboBoxItem Content="SQL Management Studio"/>
-                <ComboBoxItem Content="WinMerge"/>
-                <ComboBoxItem Content="Git"/>
-                <ComboBoxItem Content="GitCredManager"/>
-                <ComboBoxItem Content="Docker Desktop"/>
-                
-            </ComboBox>
-            <ComboBox Name="cbxArchiveApps" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Archive App"/>
-                <ComboBoxItem Content="7 Zip Manager"/>
-                <ComboBoxItem Content="Bandizip"/>
-                <ComboBoxItem Content="PeaZip"/>
-            </ComboBox>
-            <ComboBox Name="cbxFtpApps" HorizontalAlignment="Left" Margin="20,269,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select FTP App"/>
-                <ComboBoxItem Content="FileZilla"/>
-                <ComboBoxItem Content="WinSCP"/>
-                <ComboBoxItem Content="Cyberduck"/>
-            </ComboBox>
-            <ComboBox Name="cbxVideoApps" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Video Player"/>
-                <ComboBoxItem Content="VLC"/>
-                <ComboBoxItem Content="MediaMonkey"/>
-                <ComboBoxItem Content="Media Player Classic"/>
-            </ComboBox>
-            <ComboBox Name="cbxPassMgr" HorizontalAlignment="Left" Margin="20,328,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select Pass Manager"/>
-                <ComboBoxItem Content="KeePassXC"/>
-                <ComboBoxItem Content="KeeWeb"/>
-                <ComboBoxItem Content="LastPass"/>
-                <ComboBoxItem Content="Bitwarden"/>
-                <ComboBoxItem Content="1Password"/>
-            </ComboBox>
-            <ComboBox Name="cbxVPN" HorizontalAlignment="Left" Margin="20,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select VPN"/>
-                <ComboBoxItem Content="OpenVPNTechnologies"/>
-                <ComboBoxItem Content="WireGuard"/>
-                <ComboBoxItem Content="FortiClient VPN"/> 
-            </ComboBox>
-            <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select System Package "/>
-                <ComboBoxItem Content="Windows Terminal"/>
-                <ComboBoxItem Content="GnuPG Encryption"/>
-                <ComboBoxItem Content="Gpg4win"/>
-                <ComboBoxItem Content="Everything"/>
-                <ComboBoxItem Content="WizTree"/>
-                <ComboBoxItem Content="Lenovo System Update"/>
-                <ComboBoxItem Content="Intel Driver Assistant"/>
-    
-            </ComboBox>
-            <ComboBox Name="cbxTelemetry" HorizontalAlignment="Left" Margin="438,59,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableTelemetry"/>
-                <ComboBoxItem Content="DisableTelemetry"/>
-            </ComboBox>
-            <ComboBox Name="cbxActivityHistory" HorizontalAlignment="Left" Margin="438,89,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableActivityHistory"/>
-                <ComboBoxItem Content="DisableActivityHistory"/>
-            </ComboBox>
-            <ComboBox Name="cbxBackgroundApps" HorizontalAlignment="Left" Margin="438,119,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableBackgroundApps"/>
-                <ComboBoxItem Content="DisableBackgroundApps"/>
-            </ComboBox>
-            <ComboBox Name="cbxLocationTracking" HorizontalAlignment="Left" Margin="437,149,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableLocationTracking"/>
-                <ComboBoxItem Content="DisableLocationTracking"/>
-            </ComboBox>
-            <ComboBox Name="cbxAdvertisingID" HorizontalAlignment="Left" Margin="437,179,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableAdvertisingID"/>
-                <ComboBoxItem Content="DisableAdvertisingID"/>
-            </ComboBox>
-            <ComboBox Name="cbxTailoredExperiences" HorizontalAlignment="Left" Margin="437,209,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableTailoredExperiences"/>
-                <ComboBoxItem Content="DisableTailoredExperiences"/>
-            </ComboBox>
-            <ComboBox Name="cbxVisualSettings" HorizontalAlignment="Left" Margin="437,240,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="SetVisualFXAppearance"/>
-                <ComboBoxItem Content="SetVisualFXPerformance"/>
-            </ComboBox>
-            <ComboBox Name="cbxThumbsDB" HorizontalAlignment="Left" Margin="437,269,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableThumbsDB"/>
-                <ComboBoxItem Content="DisableThumbsDB"/>
-            </ComboBox>
-            <ComboBox Name="cbxThumbnails" HorizontalAlignment="Left" Margin="437,299,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableThumbnails"/>
-                <ComboBoxItem Content="DisableThumbnails"/>
-            </ComboBox>
-            <ComboBox Name="cbxCortana" HorizontalAlignment="Left" Margin="437,328,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableCortana"/>
-                <ComboBoxItem Content="DisableCortana"/>
-            </ComboBox>
-            <ComboBox Name="cbxDarkMode" HorizontalAlignment="Left" Margin="437,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="SELECT"/>
-                <ComboBoxItem Content="EnableDarkMode"/>
-                <ComboBoxItem Content="DisableDarkMode"/>
-            </ComboBox>
-            <ComboBox Name="cbxRecent" HorizontalAlignment="Left" Margin="437,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
-                <ComboBoxItem Content="Select"/>
-                <ComboBoxItem Content="ShowRecentShortcuts"/>
-                <ComboBoxItem Content="HideRecentShortcuts"/>
-            </ComboBox>
-            <Button Name="btnBrowserInstall" Content=">" HorizontalAlignment="Left" Margin="180,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnPdfInstall" Content=">" HorizontalAlignment="Left" Margin="180,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnChatInstall" Content=">" HorizontalAlignment="Left" Margin="180,119,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnTextEditorInstall" Content=">" HorizontalAlignment="Left" Margin="180,149,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnImageInstall" Content=">" HorizontalAlignment="Left" Margin="180,179,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnDevToolsInstall" Content=">" HorizontalAlignment="Left" Margin="180,208,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnArhiveAppInstall" Content=">" HorizontalAlignment="Left" Margin="180,239,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnFtpAppInstall" Content=">" HorizontalAlignment="Left" Margin="180,269,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnVideoInstall" Content=">" HorizontalAlignment="Left" Margin="180,298,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnPassMgrInstall" Content=">" HorizontalAlignment="Left" Margin="180,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnVpnInstall" Content=">" HorizontalAlignment="Left" Margin="180,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnSysInstalls" Content=">" HorizontalAlignment="Left" Margin="180,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnTelemetry" Content=">" HorizontalAlignment="Left" Margin="597,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnHistory" Content=">" HorizontalAlignment="Left" Margin="597,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnBackgroundApps" Content=">" HorizontalAlignment="Left" Margin="597,119,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnLocationTracking" Content=">" HorizontalAlignment="Left" Margin="597,149,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnAdvertisingID" Content=">" HorizontalAlignment="Left" Margin="597,179,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnTailoredExp" Content=">" HorizontalAlignment="Left" Margin="597,209,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnVFX" Content=">" HorizontalAlignment="Left" Margin="597,240,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnThumbsDB" Content=">" HorizontalAlignment="Left" Margin="597,269,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnThumbnails" Content=">" HorizontalAlignment="Left" Margin="597,299,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnCortana" Content=">" HorizontalAlignment="Left" Margin="597,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnDarkMode" Content=">" HorizontalAlignment="Left" Margin="597,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnRecent" Content=">" HorizontalAlignment="Left" Margin="597,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-            <Button Name="btnCreateRP" Content="Create Restore Point" HorizontalAlignment="Left" Margin="20,25,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="10" FontFamily="Times New Roman"/>
-            <Button Name="btnSystemSettings" Content="System Settings  " HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="10" FontFamily="Times New Roman"/>
-            <Button Name="btnCertImport" Content="ImportCertificates" HorizontalAlignment="Left" Margin="216,59,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="BTN1" Content="1" HorizontalAlignment="Left" Margin="216,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="BTN2" Content="2" HorizontalAlignment="Left" Margin="216,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction4" Content="3" HorizontalAlignment="Left" Margin="216,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction5" Content="4" HorizontalAlignment="Left" Margin="216,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction6" Content="5" HorizontalAlignment="Left" Margin="216,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction7" Content="6" HorizontalAlignment="Left" Margin="216,240,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction8" Content="7" HorizontalAlignment="Left" Margin="216,269,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction9" Content="8" HorizontalAlignment="Left" Margin="216,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnLightShot" Content="9" HorizontalAlignment="Left" Margin="216,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnInstallAnyconnect" Content="10" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnInstNet35" Content="DotNetFrame 3.5" HorizontalAlignment="Left" Margin="216,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnUnpinStartMenu" Content="UnpinStartMenu" HorizontalAlignment="Left" Margin="325,59,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnUnpinTaskBar" Content="UnpinTaskBar" HorizontalAlignment="Left" Margin="325,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction12" Content="1" HorizontalAlignment="Left" Margin="325,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction13" Content="2" HorizontalAlignment="Left" Margin="325,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction14" Content="3" HorizontalAlignment="Left" Margin="325,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction15" Content="4" HorizontalAlignment="Left" Margin="325,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnPerformAction16" Content="5" HorizontalAlignment="Left" Margin="325,240,0,0" VerticalAlignment="Top" Width="100" Height="22" />
-            <Button Name="btnPerformAction17" Content="6" HorizontalAlignment="Left" Margin="325,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
-            <Button Name="btnPerformAction18" Content="7" HorizontalAlignment="Left" Margin="325,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnBulkInstall" Content="Bulk-Install" HorizontalAlignment="Left" Margin="325,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnInstallAll" Content="Install-All" HorizontalAlignment="Left" Margin="325,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <Button Name="btnUninstallApps" Content="Uninstall-WSApps>" HorizontalAlignment="Left" Margin="325,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-            <!--  <CheckBox Name="chbWinget" Content="Winget" HorizontalAlignment="Left" Margin="225,5,0,0" VerticalAlignment="Top"/> -->
-            <!--<CheckBox Name="chbChocolyte" Content="Chocolyte" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="225,25,0,0" VerticalAlignment="Top"/> -->
-            <!-- <CheckBox Name="chbSettings" Content="Settings" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top"  Width="90" Height="20" FontSize="12" FontFamily="Times New Roman"/> -->
-            <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
-            <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
+        Title="Win Settings Manager" Height="500" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+          <Window.Resources>
+        <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#FFCA6A13" Offset="0" />
+            <GradientStop Color="#FFF67D0C" Offset="0.2" />
+            <GradientStop Color="#FFFE7F0C" Offset="0.2" />
+            <GradientStop Color="#FFFA8E12" Offset="0.5" />
+            <GradientStop Color="#FFFF981D" Offset="0.5" />
+            <GradientStop Color="#FFFCBC5A" Offset="1" />
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="CheckedOrangeBorder" Color="#FFFF700E" />
 
+        <SolidColorBrush x:Key="NotCheckedGreen" Color="DarkGreen" />
+        <Style x:Key="OrangeSwitchStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <ControlTemplate.Resources>
+                            <Storyboard x:Key="OnChecking">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="50" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="OnUnchecking">
+                                <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                    <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </ControlTemplate.Resources>
+                        <DockPanel x:Name="dockPanel">
+                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                            <Grid>
+                                <Border x:Name="BackgroundBorder" BorderBrush="#FF939393" BorderThickness="1" CornerRadius="3" Height="21" Width="94">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#FFB5B5B5" Offset="0" />
+                                            <GradientStop Color="#FFDEDEDE" Offset="0.1" />
+                                            <GradientStop Color="#FFEEEEEE" Offset="0.5" />
+                                            <GradientStop Color="#FFFAFAFA" Offset="0.5" />
+                                            <GradientStop Color="#FFFEFEFE" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse x:Name="Off" Width="14" Height="14" Stroke="#FF7A7A7A" StrokeThickness="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="14" Stroke="#FF7A7A7A" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Grid>
+                                </Border>
+                                <Border BorderBrush="#FF939393" HorizontalAlignment="Left" x:Name="slider" Width="44" Height="21" BorderThickness="1" CornerRadius="3" RenderTransformOrigin="0.5,0.5" Margin="0">
+                                    <Border.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            <SkewTransform AngleX="0" AngleY="0" />
+                                            <RotateTransform Angle="0" />
+                                            <TranslateTransform X="0" Y="0" />
+                                        </TransformGroup>
+                                    </Border.RenderTransform>
+                                    <Border.Background>
+                                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                            <GradientStop Color="#FFF0F0F0" Offset="0" />
+                                            <GradientStop Color="#FFCDCDCD" Offset="0.1" />
+                                            <GradientStop Color="#FFFBFBFB" Offset="1" />
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                            </Grid>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                                </Trigger.ExitActions>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                                </Trigger.EnterActions>
+                                <Setter TargetName="On" Property="Stroke" Value="White" />
+                                <Setter TargetName="Off" Property="Stroke" Value="White" />
+                                <!-- Change Orange or Blue color here -->
+                                <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedOrange}" />
+                                <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedOrangeBorder}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <!-- ToDo: Add Style for Isenabled == False -->
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <!-- Avaivable Packages to Install Registry Settings  -->
+        <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Width="180" SelectedIndex="0" Background="Black">
+            <ComboBoxItem Content="Select Package Manager"/>
+            <ComboBoxItem Content="Winget"/>
+            <ComboBoxItem Content="Chocolyte"/>
+        </ComboBox>
+        <ComboBox Name="cbxBrowsers" HorizontalAlignment="Left" Margin="20,59,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Browser"/>
+            <ComboBoxItem Content="Google Chrome"/>
+            <ComboBoxItem Content="Opera Browser"/>
+            <ComboBoxItem Content="Mozilla Firefox"/>
+        </ComboBox>
+        <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select PDF Reader"/>
+            <ComboBoxItem Content="Adobe Acrobat"/>
+            <ComboBoxItem Content="Sumatra PDF"/>
+            <ComboBoxItem Content="Foxit Reader"/>
+        </ComboBox>
+        <ComboBox Name="cbxChatApps" HorizontalAlignment="Left" Margin="20,119,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Chat App"/>
+            <ComboBoxItem Content="Microsoft Teams"/>
+            <ComboBoxItem Content="Microsoft Skype"/>
+            <ComboBoxItem Content="Zoom"/>
+            <ComboBoxItem Content="Telegram"/>
+            <ComboBoxItem Content="Signal"/>
+            <ComboBoxItem Content="Viber"/>
+        </ComboBox>
+        <ComboBox Name="cbxEditorApps" HorizontalAlignment="Left" Margin="20,149,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Text Editor"/>
+            <ComboBoxItem Content="Notepad++"/>
+            <ComboBoxItem Content="Atom"/>
+            <ComboBoxItem Content="Microsoft Office"/>
+        </ComboBox>
+        <ComboBox Name="cbxImageViwers" HorizontalAlignment="Left" Margin="20,179,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Image Viewer"/>
+            <ComboBoxItem Content="Flameshot"/>
+            <ComboBoxItem Content="GIMP"/>
+            <ComboBoxItem Content="IrfanView"/>
+            <ComboBoxItem Content="ShareX"/>
+        </ComboBox>
+        <ComboBox Name="cbxDevTools" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Dev Tools"/>
+            <ComboBoxItem Content="Visual Studio Code"/>
+            <ComboBoxItem Content="PyCharm"/>
+            <ComboBoxItem Content="VS 2019 Enterprise"/>
+            <ComboBoxItem Content="Azure Data Studio"/>
+            <ComboBoxItem Content="SQL Management Studio"/>
+            <ComboBoxItem Content="WinMerge"/>
+            <ComboBoxItem Content="Git"/>
+            <ComboBoxItem Content="GitCredManager"/>
+            <ComboBoxItem Content="Docker Desktop"/>
+        </ComboBox>
+        <ComboBox Name="cbxArchiveApps" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Archive App"/>
+            <ComboBoxItem Content="7 Zip Manager"/>
+            <ComboBoxItem Content="Bandizip"/>
+            <ComboBoxItem Content="PeaZip"/>
+        </ComboBox>
+        <ComboBox Name="cbxFtpApps" HorizontalAlignment="Left" Margin="20,269,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select FTP App"/>
+            <ComboBoxItem Content="FileZilla"/>
+            <ComboBoxItem Content="WinSCP"/>
+            <ComboBoxItem Content="Cyberduck"/>
+        </ComboBox>
+        <ComboBox Name="cbxVideoApps" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Video Player"/>
+            <ComboBoxItem Content="VLC"/>
+            <ComboBoxItem Content="MediaMonkey"/>
+            <ComboBoxItem Content="Media Player Classic"/>
+        </ComboBox>
+        <ComboBox Name="cbxPassMgr" HorizontalAlignment="Left" Margin="20,328,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select Pass Manager"/>
+            <ComboBoxItem Content="KeePassXC"/>
+            <ComboBoxItem Content="KeeWeb"/>
+            <ComboBoxItem Content="LastPass"/>
+            <ComboBoxItem Content="Bitwarden"/>
+            <ComboBoxItem Content="1Password"/>
+        </ComboBox>
+        <ComboBox Name="cbxVPN" HorizontalAlignment="Left" Margin="20,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select VPN"/>
+            <ComboBoxItem Content="OpenVPNTechnologies"/>
+            <ComboBoxItem Content="WireGuard"/>
+            <ComboBoxItem Content="FortiClient VPN"/>
+        </ComboBox>
+        <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select System Package "/>
+            <ComboBoxItem Content="Windows Terminal"/>
+            <ComboBoxItem Content="GnuPG Encryption"/>
+            <ComboBoxItem Content="Gpg4win"/>
+            <ComboBoxItem Content="Everything"/>
+            <ComboBoxItem Content="WizTree"/>
+            <ComboBoxItem Content="Lenovo System Update"/>
+            <ComboBoxItem Content="Intel Driver Assistant"/>
+        </ComboBox>
+        
+        <!-- Install Buttons-->
+        <Button Name="btnBrowserInstall" Content=">" HorizontalAlignment="Left" Margin="180,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnPdfInstall" Content=">" HorizontalAlignment="Left" Margin="180,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnChatInstall" Content=">" HorizontalAlignment="Left" Margin="180,119,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTextEditorInstall" Content=">" HorizontalAlignment="Left" Margin="180,149,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnImageInstall" Content=">" HorizontalAlignment="Left" Margin="180,179,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnDevToolsInstall" Content=">" HorizontalAlignment="Left" Margin="180,208,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnArhiveAppInstall" Content=">" HorizontalAlignment="Left" Margin="180,239,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnFtpAppInstall" Content=">" HorizontalAlignment="Left" Margin="180,269,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnVideoInstall" Content=">" HorizontalAlignment="Left" Margin="180,298,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnPassMgrInstall" Content=">" HorizontalAlignment="Left" Margin="180,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnVpnInstall" Content=">" HorizontalAlignment="Left" Margin="180,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnSysInstalls" Content=">" HorizontalAlignment="Left" Margin="180,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        
+        <!-- Windows Registry Settings  -->
+        <ComboBox Name="cbxTelemetry" HorizontalAlignment="Left" Margin="330,59,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableTelemetry"/>
+            <ComboBoxItem Content="DisableTelemetry"/>
+        </ComboBox>
+        <ComboBox Name="cbxActivityHistory" HorizontalAlignment="Left" Margin="330,89,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableActivityHistory"/>
+            <ComboBoxItem Content="DisableActivityHistory"/>
+        </ComboBox>
+        <ComboBox Name="cbxBackgroundApps" HorizontalAlignment="Left" Margin="330,119,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableBackgroundApps"/>
+            <ComboBoxItem Content="DisableBackgroundApps"/>
+        </ComboBox>
+        <ComboBox Name="cbxLocationTracking" HorizontalAlignment="Left" Margin="330,149,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableLocationTracking"/>
+            <ComboBoxItem Content="DisableLocationTracking"/>
+        </ComboBox>
+        <ComboBox Name="cbxAdvertisingID" HorizontalAlignment="Left" Margin="330,179,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableAdvertisingID"/>
+            <ComboBoxItem Content="DisableAdvertisingID"/>
+        </ComboBox>
+        <ComboBox Name="cbxTailoredExperiences" HorizontalAlignment="Left" Margin="330,209,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableTailoredExperiences"/>
+            <ComboBoxItem Content="DisableTailoredExperiences"/>
+        </ComboBox>
+        <ComboBox Name="cbxVisualSettings" HorizontalAlignment="Left" Margin="330,240,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="SetVisualFXAppearance"/>
+            <ComboBoxItem Content="SetVisualFXPerformance"/>
+        </ComboBox>
+        <ComboBox Name="cbxThumbsDB" HorizontalAlignment="Left" Margin="330,269,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableThumbsDB"/>
+            <ComboBoxItem Content="DisableThumbsDB"/>
+        </ComboBox>
+        <ComboBox Name="cbxThumbnails" HorizontalAlignment="Left" Margin="330,299,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableThumbnails"/>
+            <ComboBoxItem Content="DisableThumbnails"/>
+        </ComboBox>
+        <ComboBox Name="cbxCortana" HorizontalAlignment="Left" Margin="330,328,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableCortana"/>
+            <ComboBoxItem Content="DisableCortana"/>
+        </ComboBox>
+        <ComboBox Name="cbxDarkMode" HorizontalAlignment="Left" Margin="330,358,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="SELECT"/>
+            <ComboBoxItem Content="EnableDarkMode"/>
+            <ComboBoxItem Content="DisableDarkMode"/>
+        </ComboBox>
+        <ComboBox Name="cbxRecent" HorizontalAlignment="Left" Margin="330,388,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <!-- Apply Windows Registry Settings Buttons -->
+        <Button Name="btnTelemetry" Content=">" HorizontalAlignment="Left" Margin="490,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnHistory" Content=">" HorizontalAlignment="Left" Margin="490,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnBackgroundApps" Content=">" HorizontalAlignment="Left" Margin="490,119,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnLocationTracking" Content=">" HorizontalAlignment="Left" Margin="490,149,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnAdvertisingID" Content=">" HorizontalAlignment="Left" Margin="490,179,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTailoredExp" Content=">" HorizontalAlignment="Left" Margin="490,209,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnVFX" Content=">" HorizontalAlignment="Left" Margin="490,240,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnThumbsDB" Content=">" HorizontalAlignment="Left" Margin="490,269,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnThumbnails" Content=">" HorizontalAlignment="Left" Margin="490,299,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnCortana" Content=">" HorizontalAlignment="Left" Margin="490,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnDarkMode" Content=">" HorizontalAlignment="Left" Margin="490,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnRecent" Content=">" HorizontalAlignment="Left" Margin="490,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
 
-        </Grid>
-    </Window>
+        <!-- TEST COMBOBPX Settings  -->
+        <ComboBox Name="cbxTest00" HorizontalAlignment="Left" Margin="526,58,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest01" HorizontalAlignment="Left" Margin="526,88,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest0" HorizontalAlignment="Left" Margin="526,118,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest1" HorizontalAlignment="Left" Margin="526,148,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest2" HorizontalAlignment="Left" Margin="526,178,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest3" HorizontalAlignment="Left" Margin="526,208,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest4" HorizontalAlignment="Left" Margin="526,238,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest5" HorizontalAlignment="Left" Margin="526,268,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest6" HorizontalAlignment="Left" Margin="526,298,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest7" HorizontalAlignment="Left" Margin="526,328,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest8" HorizontalAlignment="Left" Margin="526,358,0,0" VerticalAlignment="Top" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+        <ComboBox Name="cbxTest9" HorizontalAlignment="Left" Margin="526,388,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="Select"/>
+            <ComboBoxItem Content="ShowRecentShortcuts"/>
+            <ComboBoxItem Content="HideRecentShortcuts"/>
+        </ComboBox>
+
+        <!-- TEST BUTTONS -->
+        <Button Name="btnTest001" Content=">" HorizontalAlignment="Left" Margin="685,58,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest002" Content=">" HorizontalAlignment="Left" Margin="685,88,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest003" Content=">" HorizontalAlignment="Left" Margin="685,118,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest004" Content=">" HorizontalAlignment="Left" Margin="685,148,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest005" Content=">" HorizontalAlignment="Left" Margin="685,178,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest006" Content=">" HorizontalAlignment="Left" Margin="685,208,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest007" Content=">" HorizontalAlignment="Left" Margin="685,238,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest008" Content=">" HorizontalAlignment="Left" Margin="685,268,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest009" Content=">" HorizontalAlignment="Left" Margin="685,298,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest010" Content=">" HorizontalAlignment="Left" Margin="685,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest011" Content=">" HorizontalAlignment="Left" Margin="685,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+        <Button Name="btnTest012" Content=">" HorizontalAlignment="Left" Margin="685,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+
+        <!-- Windows Settings Buttons COL 1 -->
+        <Button Name="btnUnpinStartMenu" Content="UnpinStartMenu" HorizontalAlignment="Left" Margin="216,59,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnUnpinTaskBar" Content="UnpinTaskBar" HorizontalAlignment="Left" Margin="216,89,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction12" Content="1" HorizontalAlignment="Left" Margin="216,119,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction13" Content="2" HorizontalAlignment="Left" Margin="216,149,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction14" Content="3" HorizontalAlignment="Left" Margin="216,179,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction15" Content="4" HorizontalAlignment="Left" Margin="216,209,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction16" Content="5" HorizontalAlignment="Left" Margin="216,240,0,0" VerticalAlignment="Top" Width="100" Height="22" />
+        <Button Name="btnPerformAction17" Content="6" HorizontalAlignment="Left" Margin="216,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
+        <Button Name="btnPerformAction18" Content="7" HorizontalAlignment="Left" Margin="216,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnBulkInstall" Content="Bulk-Install" HorizontalAlignment="Left" Margin="216,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnInstallAll" Content="Install-All" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnUninstallApps" Content="Uninstall-WSApps>" HorizontalAlignment="Left" Margin="216,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+
+        <!-- Windows Settings Buttons COL 2-->
+        <Button Name="btnCreateRP" Content="Create Restore Point" HorizontalAlignment="Left" Margin="20,27,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" FontFamily="Times New Roman"/>
+        <Button Name="btnSystemSettings" Content="System Settings  " HorizontalAlignment="Left" Margin="121,27,0,0" VerticalAlignment="Top" Width="80" Height="20" FontSize="11" FontFamily="Times New Roman"/>
+        <Button Name="btnCertImport" Content="ImportCertificates" HorizontalAlignment="Left" Margin="718,58,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="BTN1" Content="1" HorizontalAlignment="Left" Margin="718,88,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="BTN2" Content="2" HorizontalAlignment="Left" Margin="718,118,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction4" Content="3" HorizontalAlignment="Left" Margin="718,148,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction5" Content="4" HorizontalAlignment="Left" Margin="718,178,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction6" Content="5" HorizontalAlignment="Left" Margin="718,208,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction7" Content="6" HorizontalAlignment="Left" Margin="718,239,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction8" Content="7" HorizontalAlignment="Left" Margin="718,268,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnPerformAction9" Content="8" HorizontalAlignment="Left" Margin="718,298,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnLightShot" Content="9" HorizontalAlignment="Left" Margin="718,327,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnInstallAnyconnect" Content="10" HorizontalAlignment="Left" Margin="718,357,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        <Button Name="btnInstNet35" Content="DotNetFrame 3.5" HorizontalAlignment="Left" Margin="718,387,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+        
+        <!--  <CheckBox Name="chbWinget" Content="Winget" HorizontalAlignment="Left" Margin="225,5,0,0" VerticalAlignment="Top"/> -->
+        <!--<CheckBox Name="chbChocolyte" Content="Chocolyte" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="225,25,0,0" VerticalAlignment="Top"/> -->
+        <!-- <CheckBox Name="chbSettings" Content="Settings" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top"  Width="90" Height="20" FontSize="12" FontFamily="Times New Roman"/> -->
+        <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
+        <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
+        <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,414,0,0" Height="21" VerticalAlignment="Top" Width="94" />
+
+    </Grid>
+</Window>
 "@
 #Read XAML
 $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
@@ -985,26 +1164,13 @@ function AddRunAsDifferentUserInContextMenu {
     }
     Write-Host "Finished" -ForegroundColor Magenta
 }
-Function setBGRegion {
-    Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 0 -Verbose
-    Set-Culture bg-BG -Verbose
-    Set-TimeZone -Name "FLE Standard Time" -Verbose
-    Set-WinSystemLocale -SystemLocale "bg-BG" -Verbose
-    Set-WinHomeLocation -GeoId 35 -Verbose
-    $LanguageList = Get-WinUserLanguageList 
-    $LanguageList.Add("bg-BG")
-    Set-WinUserLanguageList $LanguageList -Verbose
-    Write-Host "Finished" -ForegroundColor Magenta
+Function ShowTrayIcons{
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1
 }
-function installMSIPackage {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [String] $msiFIle
-    )
-    Start-Process msiexec.exe -Wait -ArgumentList  "/I  $msiFIle  /quiet"
-    Write-Host "Finished" -ForegroundColor Magenta
+Function HideTrayIcons{
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 0
 }
+
 function DisableIP6 {
     Get-NetAdapter -Name *
     $adapters = Get-NetAdapterBinding -ComponentID ms_tcpip6
@@ -1055,6 +1221,26 @@ function CheckChoco{
               
         Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
     }
+}
+Function setBGRegion {
+    Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 0 -Verbose
+    Set-Culture bg-BG -Verbose
+    Set-TimeZone -Name "FLE Standard Time" -Verbose
+    Set-WinSystemLocale -SystemLocale "bg-BG" -Verbose
+    Set-WinHomeLocation -GeoId 35 -Verbose
+    $LanguageList = Get-WinUserLanguageList 
+    $LanguageList.Add("bg-BG")
+    Set-WinUserLanguageList $LanguageList -Verbose
+    Write-Host "Finished" -ForegroundColor Magenta
+}
+function installMSIPackage {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [String] $msiFIle
+    )
+    Start-Process msiexec.exe -Wait -ArgumentList  "/I  $msiFIle  /quiet"
+    Write-Host "Finished" -ForegroundColor Magenta
 }
 ########################## BUTTONS####################
 $btnSystemSettings.Add_Click( {
