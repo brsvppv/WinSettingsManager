@@ -2244,8 +2244,7 @@ $btnSysInstalls.Add_Click( {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Everything*" }
             #$sysAppPackage = "Intel.IntelDriverAndSupportAssistant "
         }
-        if ($cbxSelectSystemApps.Text -eq "XMind")
-        {
+        if ($cbxSelectSystemApps.Text -eq "XMind"){
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*xmind*" }
         }
         if ($sysAppPackage -eq $null) {
