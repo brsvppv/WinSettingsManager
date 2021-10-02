@@ -1711,7 +1711,7 @@ Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartu
                         $command = $global:CommandInstall + $Package
                         Invoke-Expression $command | Out-Host | Write-Verbose
                         Start-Sleep -Seconds 1
-                        [System.Console]::Beep(1111, 333)
+                        
                     }
                 }
                 elseif ($cbxBulkPackageManager.SelectedIndex -eq 2) {
@@ -1720,7 +1720,7 @@ Title="Bulk Install" Height="425" Width="400" ResizeMode="NoResize" WindowStartu
                         Invoke-Expression $command | Out-Host | Write-Verbose
                         Start-Sleep -Seconds 1
                         DoSpeak
-                        [System.Console]::Beep(1111, 333)
+                       
                     }
                 }
                 else { 
@@ -1762,9 +1762,6 @@ $btnBrowserInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333) | Write-Verbose
-                Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 # $command = $global:CommandInstall + $sysAppPackage.PackageName
                 #Invoke-Expression $command | Out-Host
                 if ($?) {
@@ -1808,9 +1805,6 @@ $btnPdfInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
-                Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1864,7 +1858,6 @@ $btnChatInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak("$text")
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1903,7 +1896,6 @@ $btnTextEditorInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -1943,7 +1935,6 @@ $btnImageInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2014,7 +2005,6 @@ $btnDevToolsInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2048,7 +2038,6 @@ $btnArhiveAppInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2087,7 +2076,6 @@ $btnFtpAppInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2124,7 +2112,6 @@ $btnVideoInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2166,7 +2153,6 @@ $btnPassMgrInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     Write-Host "Installed $sysAppPackage.PackageName" -ForegroundColor Green
                     #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
@@ -2210,7 +2196,6 @@ $btnVpnInstall.Add_Click( {
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2261,7 +2246,7 @@ $btnSysInstalls.Add_Click( {
         }
         if ($cbxSelectSystemApps.Text -eq "XMind")
         {
-            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*XMind*" }
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*xmind*" }
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
@@ -2272,10 +2257,7 @@ $btnSysInstalls.Add_Click( {
                 Write-host "$InstNotification"
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
-                Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)         
-                Start-Sleep -Seconds 1
-                
+                Start-Sleep -Seconds 1                
                 if ($?) {
                     DoSpeak
                     Write-Host "Installed $sysAppPackage" -ForegroundColor Green
@@ -2294,7 +2276,6 @@ $btnInstallAll.Add_Click({
                 $command = $global:CommandInstall + $Package.PackageName
                 Invoke-Expression $command | Out-Host | Write-Verbose
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
             }
         }
         elseif ($cbxPackageManager.SelectedIndex -eq 2) {
@@ -2302,7 +2283,6 @@ $btnInstallAll.Add_Click({
                 $command = $global:CommandInstall + $Package.PackageName
                 Invoke-Expression $command | Out-Host | Write-Verbose
                 Start-Sleep -Seconds 1
-                [System.Console]::Beep(1111, 333)
             }
         }
         else { 
