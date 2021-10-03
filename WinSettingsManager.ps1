@@ -413,7 +413,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
         <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
         <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,414,0,0" Height="21" VerticalAlignment="Top" Width="94" />
-        <Button Name="btnViewList" Content="View Pacakge List  " HorizontalAlignment="Left" Margin="115,414,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
+        <Button Name="btnViewList" Content="View Pacakge List" IsEnabled="false" HorizontalAlignment="Left" Margin="115,414,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
 
     </Grid>
 </Window>
@@ -1315,7 +1315,6 @@ $btnSystemSettings.Add_Click( {
         $Settings.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
     })
-
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
         if ($cbxPackageManager.SelectedIndex -eq 1) {
@@ -1354,9 +1353,9 @@ $cbxPackageManager.Add_SelectionChanged( {
             #itemm missing pakcages from Choco
             $cbxVPN.Items.Add('Hamachi')
             $cbxVPN.Items.Add('Global VPN Client')  
-
+            $btnViewList.IsEnabled = $true
         }
-        if ($cbxPackageManager.SelectedIndex -eq 2) {
+        elseif ($cbxPackageManager.SelectedIndex -eq 2) {
             $global:packageMgr = "choco"
             $InstCMD = 'install'
             $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
@@ -1370,21 +1369,25 @@ $cbxPackageManager.Add_SelectionChanged( {
                 Start-Sleep -Seconds "1"
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
                 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
-            }
-            else {
-                      
+            }   
+            else {   
                 Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
             }
             Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
             Start-Sleep -Seconds "1"
             $cbxVPN.Items.Remove('Hamachi')
             $cbxVPN.Items.Remove('Global VPN Client')
+            $btnViewList.IsEnabled = $true
+        }
+        else{
+            $btnViewList.IsEnabled = $false
         }
         $global:packageMgr = $packageMgr
         $global:PackageArray = $PackageArray
         $global:CommandInstall = $global:CommandInstall
         return $packageArray
     })
+# VIEW PACKAGE LIST
 $btnViewList.Add_Click({
         [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
         [void][Reflection.Assembly]::LoadWithPartialName('System.Speech')
@@ -2330,13 +2333,14 @@ $btnInstallAll.Add_Click({
                 $command = $global:CommandInstall + $Package.PackageName
                 Invoke-Expression $command | Out-Host | Write-Verbose
                 Start-Sleep -Seconds 1
+                
             }
         }
         else { 
             Write-Host "No Package Manager Selected"
         }
+        DoSpeak
     })
-
 ################################# COMBOBOXES COLUMN 3 #####################################
 $btnTrayIcons.Add_Click({
         if ($ShowHideTrayIcons.SelectedIndex -eq 1) {
