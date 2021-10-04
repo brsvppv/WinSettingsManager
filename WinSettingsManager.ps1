@@ -129,6 +129,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="Google Chrome"/>
             <ComboBoxItem Content="Opera Browser"/>
             <ComboBoxItem Content="Mozilla Firefox"/>
+            <ComboBoxItem Content="Tor Browser"/>
         </ComboBox>
         <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="Select PDF Reader"/>
@@ -1802,9 +1803,11 @@ $btnBrowserInstall.Add_Click( {
         }
         if ($cbxBrowsers.Text -eq "Mozilla Firefox") {
 
-            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*firefox*" }    
-            
-            
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*firefox*" } 
+        }
+        if($cbxBrowsers.Text -eq " Tor Browser"){
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*tor*" }
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
@@ -1837,17 +1840,14 @@ $btnPdfInstall.Add_Click( {
         if ($cbxPDFReaders.Text -eq "Adobe Acrobat") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Adobe*Reader*" }
-            $sysAppPackage = "Adobe.AdobeAcrobatReaderDC"
         }
         if ($cbxPDFReaders.Text -eq "Sumatra PDF") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Sumatra*" }
-            $sysAppPackage = "SumatraPDF.SumatraPDF"
         }
         if ($cbxPDFReaders.Text -eq "Foxit Reader") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Foxit*" }
-            $sysAppPackage = "Foxit.FoxitReader"
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
@@ -1855,7 +1855,7 @@ $btnPdfInstall.Add_Click( {
         }
         else {
             Try {
-                Write-host "$InstNotification"  + $sysAppPackage.PackageName
+                Write-host "$InstNotification" + $sysAppPackage.PackageName
                 $command = $global:CommandInstall + $sysAppPackage.PackageName
                 Invoke-Expression $command | Out-Host
                 Start-Sleep -Seconds 1
