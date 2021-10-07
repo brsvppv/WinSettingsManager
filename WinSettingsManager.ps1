@@ -115,9 +115,9 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         </Style>
     </Window.Resources>
     <Grid>
-        <Grid.Background>
+        <!--<Grid.Background>
             <ImageBrush ImageSource="https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/Ressources/BKGR1.jpg"/>
-        </Grid.Background>
+        </Grid.Background> -->
         <!-- Avaivable Packages to Install Registry Settings  -->
         <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Height="22" Width="180" SelectedIndex="0" Background="Black">
             <ComboBoxItem Content="Select Package Manager"/>
