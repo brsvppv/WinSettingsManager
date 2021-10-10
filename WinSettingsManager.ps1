@@ -1322,7 +1322,7 @@ $cbxPackageManager.Add_SelectionChanged( {
             $global:packageMgr = "winget"
             $InstCMD = 'install -e --id'
             $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-            Start-Sleep -Seconds 1
+            Start-Sleep -Milliseconds 100
             $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
                 [pscustomobject]@{
                     PackageName = $WingetPackage
@@ -1355,7 +1355,7 @@ $cbxPackageManager.Add_SelectionChanged( {
             else {      
                 Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
             }    
-            Start-Sleep -Seconds 1
+            Start-Sleep -Milliseconds 100
             #itemm missing pakcages from Choco
             $cbxVPN.Items.Add('Hamachi')
             $cbxVPN.Items.Add('Global VPN Client')  
