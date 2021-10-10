@@ -19,7 +19,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         
-        Title="Win Settings Manager" Height="500" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Win Settings Manager" Height="510" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
         <Window.Resources>
         <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFCA6A13" Offset="0" />
@@ -115,6 +115,11 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         </Style>
     </Window.Resources>
     <Grid>
+
+        <!--<Grid.Background>
+            <ImageBrush ImageSource="https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/Ressources/BKGR1.jpg"/>
+        </Grid.Background> -->
+        
         <!-- Avaivable Packages to Install Registry Settings  -->
         <ComboBox Name="cbxPackageManager" HorizontalAlignment="Left" Margin="21,4,0,0" VerticalAlignment="Top" Height="22" Width="180" SelectedIndex="0" Background="Black">
             <ComboBoxItem Content="Select Package Manager"/>
@@ -212,7 +217,13 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
             <ComboBoxItem Content="Lenovo System Update"/>
             <ComboBoxItem Content="Intel Driver Assistant"/>
         </ComboBox>
-        
+        <ComboBox Name="cbxCloudStorageApps" HorizontalAlignment="Left" Margin="20,418,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+            <ComboBoxItem Content="OneDrive "/>
+            <ComboBoxItem Content="GoogleDrive"/>
+            <ComboBoxItem Content="DropBox"/>
+            <ComboBoxItem Content="MegaSync"/>
+            <ComboBoxItem Content="NextCloud"/>
+        </ComboBox>
         <!-- Install Buttons-->
         <Button Name="btnBrowserInstall" Content=">" HorizontalAlignment="Left" Margin="180,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnPdfInstall" Content=">" HorizontalAlignment="Left" Margin="180,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
@@ -226,7 +237,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <Button Name="btnPassMgrInstall" Content=">" HorizontalAlignment="Left" Margin="180,328,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnVpnInstall" Content=">" HorizontalAlignment="Left" Margin="180,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <Button Name="btnSysInstalls" Content=">" HorizontalAlignment="Left" Margin="180,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-        
+        <Button Name="btnCloudStorageApps" Content=">" HorizontalAlignment="Left" Margin="180,418,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
         <!-- Windows Registry Settings  -->
         <ComboBox Name="cbxTelemetry" HorizontalAlignment="Left" Margin="330,59,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
             <ComboBoxItem Content="SELECT"/>
@@ -413,8 +424,8 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <!-- <CheckBox Name="chbSettings" Content="Settings" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top"  Width="90" Height="20" FontSize="12" FontFamily="Times New Roman"/> -->
         <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
         <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
-        <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,414,0,0" Height="21" VerticalAlignment="Top" Width="94" />
-        <Button Name="btnViewList" Content="View Pacakge List" IsEnabled="false" HorizontalAlignment="Left" Margin="115,414,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
+        <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,445,0,0" Height="21" VerticalAlignment="Top" Width="94" />
+        <Button Name="btnViewList" Content="View Pacakge List" IsEnabled="false" HorizontalAlignment="Left" Margin="115,445,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
 
     </Grid>
 </Window>
@@ -1322,7 +1333,7 @@ $cbxPackageManager.Add_SelectionChanged( {
             $global:packageMgr = "winget"
             $InstCMD = 'install -e --id'
             $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-            Start-Sleep -Milliseconds 100
+            Start-Sleep -Seconds 1
             $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
                 [pscustomobject]@{
                     PackageName = $WingetPackage
@@ -1340,22 +1351,22 @@ $cbxPackageManager.Add_SelectionChanged( {
                     Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
                     #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 
                     Start-Sleep -Milliseconds 100
-                    Write-Host Winget Installed 
+                    Write-Host "Winget Package Manager has been Installed" -ForegroundColor Green
                 }
                 catch {
                     Write-host "ERROR OCCURED $_"
-            
+                
                 }
                 Finally {
-            
+                
                     Remove-Item $LocalDestination -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-            
+                
                 }
             }
             else {      
                 Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
-            }    
-            Start-Sleep -Milliseconds 100
+            }     
+            Start-Sleep -Seconds 1
             #itemm missing pakcages from Choco
             $cbxVPN.Items.Add('Hamachi')
             $cbxVPN.Items.Add('Global VPN Client')  
@@ -2324,6 +2335,43 @@ $btnSysInstalls.Add_Click( {
             }   
         }  
     })
+$btnCloudStorageApps.Add_Click{
+    if ($cbxCloudStorageApps.Text -eq "OneDrive") {
+        $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*OneDrive*" }
+    }
+    if ($cbxCloudStorageApps.Text -eq "GoogleDrive") {
+        $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Google*Drive*" }
+    }
+    if ($cbxCloudStorageApps.Text -eq "DropBox") {
+        $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*DropBox*" }
+    }
+    if ($cbxCloudStorageApps.Text -eq "MegaSync") {
+        $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*MegaSync*" }
+    }
+    if ($cbxCloudStorageApps.Text -eq "NextCloud") {
+        $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*NextCloud*" }
+    }
+    if ($sysAppPackage -eq $null) {
+        Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
+        #[System.Windows.MessageBox]::Show("No Packages Selected", 'Error Installation', 'OK', 'Information')           
+    }
+    if (-not($sysAppPackage -eq $null)) {
+        Try {
+            Write-host "$InstNotification"
+            $command = $global:CommandInstall + $sysAppPackage.PackageName
+            Invoke-Expression $command | Out-Host
+            Start-Sleep -Seconds 1                
+            if ($?) {
+                DoSpeak
+                Write-Host "Installed $sysAppPackage" -ForegroundColor Green
+                #[System.Windows.MessageBox]::Show("Installed $sysAppPackage".'Installtion Finished', 'OK', 'Information')
+            }
+        }
+        catch {
+            [System.Windows.MessageBox]::Show("Error Occured Installation :  $_", 'Error Installation', 'OK', 'Error')
+        }   
+    }  
+}
 #################################  Install-ALl #################################
 $btnInstallAll.Add_Click({
         if ($cbxPackageManager.SelectedIndex -eq 1) {
