@@ -1328,7 +1328,7 @@ $cbxPackageManager.Add_SelectionChanged( {
                     PackageName = $WingetPackage
                 }
             }
-            $checkWinget = (Invoke-Expression "winget -v" | Out-Null )
+            $checkWinget = (Invoke-Expression "winget -v")
             if (-not($checkWinget)) {
                 try {
                     Write-host "Downloading Winget Package"
