@@ -1328,8 +1328,6 @@ $cbxPackageManager.Add_SelectionChanged( {
                     PackageName = $WingetPackage
                 }
             }
-            $checkWinget = (Invoke-Expression "winget -v" | Out_ )
-            $checkWinget = (Invoke-Expression "winget -v" | Out-Null )
             $checkWinget = (Invoke-Expression "winget -v" | Out-Null )
             if (-not($checkWinget)) {
                 try {
