@@ -1260,7 +1260,7 @@ function installMSIPackage {
     Start-Process msiexec.exe -Wait -ArgumentList  "/I  $msiFIle  /quiet"
     Write-Host "Finished" -ForegroundColor Magenta
 }
-########################## BUTTONS####################
+########################## BUTTONS ####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
         [xml]$XAML = @"
@@ -1404,7 +1404,7 @@ $cbxPackageManager.Add_SelectionChanged( {
         $global:CommandInstall = $global:CommandInstall
         return $packageArray
     })
-# VIEW PACKAGE LIST
+#VIEW PACKAGE LIST
 $btnViewList.Add_Click({
         [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
         [void][Reflection.Assembly]::LoadWithPartialName('System.Speech')
@@ -1451,7 +1451,7 @@ $btnViewList.Add_Click({
         $PackageViewForm.ShowDialog() | out-null
         
     })
-#EMpty Setting For NOW
+#Empty Setting For NOW
 #Uninstall Selected Aaps
 $btnUninstallApps.Add_Click( {
         UninstallWinApps
@@ -2335,6 +2335,7 @@ $btnSysInstalls.Add_Click( {
             }   
         }  
     })
+################################# CLOUD APPS INSTALLS #################################
 $btnCloudStorageApps.Add_Click{
     if ($cbxCloudStorageApps.Text -eq "OneDrive") {
         $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*OneDrive*" }
