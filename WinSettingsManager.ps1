@@ -1,3 +1,4 @@
+[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 $ver = $host | Select-Object Version
 if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
 
@@ -24,7 +25,7 @@ If ((New-Object Security.Principal.WindowsPrincipal $IsAdmin).IsInRole([Security
     # Exit from the current, unelevated, process
     exit
 }
-[Net.ServicePointManager]::SecurityProtocol = 'Tls12'
+
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 [void][Reflection.Assembly]::LoadWithPartialName('System.Speech')
 [void][System.Reflection.Assembly]::LoadWithPartialName('presentationframework')
