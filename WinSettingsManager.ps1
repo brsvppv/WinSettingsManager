@@ -2438,7 +2438,7 @@ $btnDevToolsInstall.Add_Click( {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Azure*Data*Studio*" }
         }
         #<ComboBoxItem Content="SQL Management Studio"/>
-        if ($cbxDevTools.Text -eq "SQL Managment Studio") {
+        if ($cbxDevTools.Text -eq "SQL Management Studio") {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*SQL*Studio*" }
         
         }
