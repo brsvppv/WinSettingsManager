@@ -1,8 +1,9 @@
 Set-ExecutionPolicy Bypass -Scope Process -Force; [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    
     Start-Process PowerShell -Verb RunAs "-NoProfile -ExecutionPolicy Bypass -Command `"cd '$pwd'; & '$PSCommandPath';`"";
-    exit;
-}
+   
+
 #Get-TimeZone -ListAvailable | Select-Object{$_.id,$_.DisplayName}
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 [void][Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
@@ -2247,12 +2248,12 @@ $btnChatInstall.Add_Click( {
         if ($cbxChatApps.Text -eq "Telegram") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Telegram*" }
-            $sysAppPackage = "Telegram.TelegramDesktop"
+
         }
         if ($cbxChatApps.Text -eq "Signal") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Signal*" }
-            $sysAppPackage = "OpenWhisperSystems.Signal"
+ 
         }
         if ($cbxChatApps.Text -eq "Viber") {
 
@@ -2578,7 +2579,7 @@ $btnPassMgrInstall.Add_Click( {
 $btnVpnInstall.Add_Click( {
         if ($cbxVPN.Text -eq "OpenVPNTechnologies") {
 
-            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*code*" }
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*OpenVPN*" }
             #$sysAppPackage = "OpenVPNTechnologies.OpenVPN"
         }
         if ($cbxVPN.Text -eq "WireGuard") {
@@ -2767,5 +2768,6 @@ $btnCleanUpMachine.Add_CLick({
 })
 
 $MainForm.ShowDialog() | out-null
+}
 
 #Set-ExecutionPolicy Bypass -Scope Process -Force;  Invoke-Command {Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WinSettingsManager.ps1'))}
