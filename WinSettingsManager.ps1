@@ -346,10 +346,10 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Show Tray Icons"/>
         <ComboBoxItem Content="Hide Try Icons"/>
     </ComboBox>
-    <ComboBox Name="cbxTest01" HorizontalAlignment="Left" Margin="526,88,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+    <ComboBox Name="cbxSharingMappedDrives" HorizontalAlignment="Left" Margin="526,88,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select"/>
-        <ComboBoxItem Content="TEST"/>
-        <ComboBoxItem Content="TEST"/>
+        <ComboBoxItem Content="EnableSharingMappedDrives"/>
+        <ComboBoxItem Content="DisableSharingMappedDrives"/>
     </ComboBox>
     <ComboBox Name="cbxTest0" HorizontalAlignment="Left" Margin="526,118,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select"/>
@@ -404,7 +404,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
 
     <!-- TEST BUTTONS -->
     <Button Name="btnTrayIcons" Content=">" HorizontalAlignment="Left" Margin="685,58,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-    <Button Name="btnTest002" Content=">" HorizontalAlignment="Left" Margin="685,88,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
+    <Button Name="btnMappedDrives" Content=">" HorizontalAlignment="Left" Margin="685,88,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnTest003" Content=">" HorizontalAlignment="Left" Margin="685,118,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnTest004" Content=">" HorizontalAlignment="Left" Margin="685,148,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnTest005" Content=">" HorizontalAlignment="Left" Margin="685,178,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
@@ -481,17 +481,10 @@ $sysAppPackage = $null
 #$MainForm.Topmost = $True
 $WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
 $ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
-
 $InstNotification = "Installing" + $sysAppPackage.PackageName
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
 #write-host $orig -ForegroundColor Yellow
-Function RequireAdmin {
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-        Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $PSCommandArgs" -WorkingDirectory $pwd -Verb RunAs
-        Exit
-    }
-}
 Function WaitForKey {
     Write-Host "Press any key to continue..."
     [Console]::ReadKey($true) | Out-Null 
@@ -2822,5 +2815,25 @@ $btnTrayIcons.Add_Click({
 $btnCleanUpMachine.Add_CLick({
         CleanUpMachine
     })
-
+$btnMappedDrives.Add_Click({
+if ($cbxSharingMappedDrives.SelectedIndex -eq 1) {
+            try {
+                EnableSharingMappedDrives 
+            }
+            catch {
+                [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
+            }
+        }
+        elseif ($cbxSharingMappedDrives.SelectedIndex -eq 2) {
+            try {
+                DisableSharingMappedDrives 
+            }
+            catch {
+                [System.Windows.MessageBox]::Show("An Error Occured:  $_", 'Error', 'OK', 'Error')
+            }
+        }
+        else {
+            [System.Windows.MessageBox]::Show("No Action Selected:  $_", 'No Action', 'OK', 'Info')
+        }
+})
 $MainForm.ShowDialog() | out-null
