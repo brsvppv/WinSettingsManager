@@ -1,12 +1,11 @@
 [Net.ServicePointManager]::SecurityProtocol = 'Tls12'
 $ver = $host | Select-Object Version
-if ($ver.Version.Major -gt 1)  {$Host.Runspace.ThreadOptions = "ReuseThread"}
+if ($ver.Version.Major -gt 1) { $Host.Runspace.ThreadOptions = "ReuseThread" }
 
 # Verify that user running script is an administrator
-$IsAdmin=[Security.Principal.WindowsIdentity]::GetCurrent()
-If ((New-Object Security.Principal.WindowsPrincipal $IsAdmin).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) -eq $FALSE)
-{
-  "`nERROR: You are NOT a local administrator.  Run this script after logging on with a local administrator account."
+$IsAdmin = [Security.Principal.WindowsIdentity]::GetCurrent()
+If ((New-Object Security.Principal.WindowsPrincipal $IsAdmin).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) -eq $FALSE) {
+    "`nERROR: You are NOT a local administrator.  Run this script after logging on with a local administrator account."
     # We are not running "as Administrator" 
     # ReLunch With Admin Rights
 
@@ -2816,7 +2815,7 @@ $btnCleanUpMachine.Add_CLick({
         CleanUpMachine
     })
 $btnMappedDrives.Add_Click({
-if ($cbxSharingMappedDrives.SelectedIndex -eq 1) {
+        if ($cbxSharingMappedDrives.SelectedIndex -eq 1) {
             try {
                 EnableSharingMappedDrives 
             }
@@ -2835,5 +2834,5 @@ if ($cbxSharingMappedDrives.SelectedIndex -eq 1) {
         else {
             [System.Windows.MessageBox]::Show("No Action Selected:  $_", 'No Action', 'OK', 'Info')
         }
-})
+    })
 $MainForm.ShowDialog() | out-null
