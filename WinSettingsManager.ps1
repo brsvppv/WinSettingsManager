@@ -1174,34 +1174,6 @@ Function UnpinStartMenuTiles {
         Set-ItemProperty -Path $key.PSPath -Name "Data" -Type Binary -Value $data
     }
 }
-function AddRunAsDifferentUserInContextMenu {
-    param
-    (
-        [Parameter(
-            Mandatory = $true,
-            ParameterSetName = "Show"
-        )]
-        [switch]
-        $Show,
-
-        [Parameter(
-            Mandatory = $true,
-            ParameterSetName = "Hide"
-        )]
-        [switch]
-        $Hide
-    )
-
-    switch ($PSCmdlet.ParameterSetName) {
-        "Show" {
-            Remove-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\exefile\shell\runasuser" -Name Extended -Force -ErrorAction Ignore
-        }
-        "Hide" {
-            New-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\exefile\shell\runasuser" -Name Extended -PropertyType String -Value "" -Force
-        }
-    }
-    Write-Host "Finished" -ForegroundColor Magenta
-}
 Function ShowTrayIcons {
     Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "EnableAutoTray" -Type DWord -Value 1 -Verbose
 }
@@ -1268,15 +1240,6 @@ Function setBGRegion {
     $LanguageList = Get-WinUserLanguageList 
     $LanguageList.Add("bg-BG")
     Set-WinUserLanguageList $LanguageList -Verbose
-    Write-Host "Finished" -ForegroundColor Magenta
-}
-function installMSIPackage {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [String] $msiFIle
-    )
-    Start-Process msiexec.exe -Wait -ArgumentList  "/I  $msiFIle  /quiet"
     Write-Host "Finished" -ForegroundColor Magenta
 }
 function CleanUpMachine {
@@ -1641,6 +1604,44 @@ function CleanUpMachine {
     Write-Host "[DONE]" -ForegroundColor Green -BackgroundColor Black
     
 }
+function installMSIPackage {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [String] $msiFIle
+    )
+    Start-Process msiexec.exe -Wait -ArgumentList  "/I  $msiFIle  /quiet"
+    Write-Host "Finished" -ForegroundColor Magenta
+}
+function AddRunAsDifferentUserInContextMenu {
+    param
+    (
+        [Parameter(
+            Mandatory = $true,
+            ParameterSetName = "Show"
+        )]
+        [switch]
+        $Show,
+
+        [Parameter(
+            Mandatory = $true,
+            ParameterSetName = "Hide"
+        )]
+        [switch]
+        $Hide
+    )
+
+    switch ($PSCmdlet.ParameterSetName) {
+        "Show" {
+            Remove-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\exefile\shell\runasuser" -Name Extended -Force -ErrorAction Ignore
+        }
+        "Hide" {
+            New-ItemProperty -Path "Registry::HKEY_CLASSES_ROOT\exefile\shell\runasuser" -Name Extended -PropertyType String -Value "" -Force
+        }
+    }
+    Write-Host "Finished" -ForegroundColor Magenta
+}
+
 ########################## BUTTONS ####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
@@ -1710,7 +1711,7 @@ Title="SystemSettings" Height="480" Width="250" ResizeMode="NoResize" WindowStar
     })
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
-        if ($cbxPackageManager.SelectedIndex -eq 1) {
+        if ($cbxPackageManager.SelectedIndex -eq 1) {          
             $global:packageMgr = "winget"
             $InstCMD = 'install -e --id'
             $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
