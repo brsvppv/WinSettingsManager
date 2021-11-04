@@ -236,7 +236,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         </Grid>
     </Window>
 "@
-#Read XAML
+#Read XAML TEST
 $reader = (New-Object System.Xml.XmlNodeReader $xaml) 
 try { $MainForm = [Windows.Markup.XamlReader]::Load( $reader ) }
 catch { Write-Host "Unable to load Windows.Markup.XamlReader"; exit }
