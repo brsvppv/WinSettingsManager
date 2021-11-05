@@ -42,7 +42,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     
-    Title="Win Settings Manager" Height="550" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    Title="Win Settings Manager" Height="510" Width="860" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.Resources>
     <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#FFCA6A13" Offset="0" />
@@ -251,14 +251,6 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="MegaSync"/>
         <ComboBoxItem Content="NextCloud"/>
     </ComboBox>
-    <ComboBox Name="cbxGameApps" HorizontalAlignment="Left" Margin="20,448,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
-    <ComboBoxItem Content="Select Cloud App"/>
-    <ComboBoxItem Content="Steam"/>
-    <ComboBoxItem Content="GOG Galaxy"/>
-    <ComboBoxItem Content="DropBox"/>
-    <ComboBoxItem Content="MegaSync"/>
-    <ComboBoxItem Content="NextCloud"/>
-    </ComboBox>
     <!-- Install Buttons-->
     <Button Name="btnBrowserInstall" Content=">" HorizontalAlignment="Left" Margin="180,59,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnPdfInstall" Content=">" HorizontalAlignment="Left" Margin="180,89,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
@@ -273,7 +265,6 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     <Button Name="btnVpnInstall" Content=">" HorizontalAlignment="Left" Margin="180,358,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnSysInstalls" Content=">" HorizontalAlignment="Left" Margin="180,388,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
     <Button Name="btnCloudStorageApps" Content=">" HorizontalAlignment="Left" Margin="180,418,0,0" VerticalAlignment="Top" Width="25" Height="22"/>
-    <Button Name="btnGamingApps" Content=">" HorizontalAlignment="Left" Margin="180,448,0,0" VerticalAlignment="Top" Width="25" Height="22"/
     <!-- Windows Registry Settings  -->
     <ComboBox Name="cbxTelemetry" HorizontalAlignment="Left" Margin="330,59,0,0" VerticalAlignment="Top"  Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="SELECT"/>
@@ -436,7 +427,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     <Button Name="btnPerformAction17" Content="6" HorizontalAlignment="Left" Margin="216,269,0,0" VerticalAlignment="Top" Width="100" Height="22" />
     <Button Name="btnPerformAction18" Content="7" HorizontalAlignment="Left" Margin="216,299,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnBulkInstall" Content="Bulk-Install" HorizontalAlignment="Left" Margin="216,328,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-    <Button Name="btnTEMPNAME" Content="btnTEMPNAME" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+    <Button Name="btnInstallAll" Content="Install-All" HorizontalAlignment="Left" Margin="216,358,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnUninstallApps" Content="Uninstall-WSApps>" HorizontalAlignment="Left" Margin="216,388,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 
     <!-- Windows Settings Buttons COL 2-->
@@ -460,8 +451,8 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     <!-- <CheckBox Name="chbSettings" Content="Settings" Style="{StaticResource {x:Type ToggleButton}}" HorizontalAlignment="Left" Margin="111,25,0,0" VerticalAlignment="Top"  Width="90" Height="20" FontSize="12" FontFamily="Times New Roman"/> -->
     <Label Name="lblCurTime" Content="" HorizontalAlignment="Right" Margin="0,0,0,0" VerticalAlignment="Top" Width="150" Height="50" FontSize="34" FontFamily="Times New Roman"/>
     <Label Name="lblTitle" Content="WinSettings" HorizontalAlignment="Center" Margin="0,0,0,0" VerticalAlignment="Top" Width="200" Height="50" FontSize="34" FontFamily="Times New Roman"/>
-    <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,490,0,0" Height="21" VerticalAlignment="Top" Width="94" />
-    <Button Name="btnViewList" Content="View Pacakge List" IsEnabled="false" HorizontalAlignment="Left" Margin="115,490,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
+    <CheckBox Name="chk_Rbutton" HorizontalAlignment="Left" Style="{DynamicResource OrangeSwitchStyle}" Margin="19,445,0,0" Height="21" VerticalAlignment="Top" Width="94" />
+    <Button Name="btnViewList" Content="View Pacakge List" IsEnabled="false" HorizontalAlignment="Left" Margin="115,445,0,0" VerticalAlignment="Top" Width="90" Height="20" FontSize="11" FontFamily="Times New Roman"/>
 
 </Grid>
 </Window>
@@ -2863,10 +2854,27 @@ $btnCloudStorageApps.Add_Click{
     }  
 }
 #################################  Install-ALl #################################
-$btnTEMPNAME.Add_Click({
-    [System.Windows.MessageBox]::Show("TEMP", 'No Action', 'OK', 'Info')
-
-})
+$btnInstallAll.Add_Click({
+        if ($cbxPackageManager.SelectedIndex -eq 1) {
+            foreach ($Package in $PackageArray) {
+                $command = $global:CommandInstall + $Package.PackageName
+                Invoke-Expression $command | Out-Host | Write-Verbose
+                Start-Sleep -Seconds 1
+            }
+        }
+        elseif ($cbxPackageManager.SelectedIndex -eq 2) {
+            foreach ($Package in $PackageArray) {
+                $command = $global:CommandInstall + $Package.PackageName
+                Invoke-Expression $command | Out-Host | Write-Verbose
+                Start-Sleep -Seconds 1
+            
+            }
+        }
+        else { 
+            Write-Host "No Package Manager Selected"
+        }
+        DoSpeak
+    })
 ################################# COMBOBOXES COLUMN 3 #####################################
 $btnTrayIcons.Add_Click({
         if ($ShowHideTrayIcons.SelectedIndex -eq 1) {
@@ -2915,5 +2923,3 @@ $btnMappedDrives.Add_Click({
         }
     })
 $MainForm.ShowDialog() | out-null
-
-#Set-ExecutionPolicy Bypass -Scope Process -Force;  Invoke-Command {Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WinSettingsManager.ps1'))}
