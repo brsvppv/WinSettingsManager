@@ -233,7 +233,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="FortiClient VPN"/>
     </ComboBox>
     <ComboBox Name="cbxSelectSystemApps" HorizontalAlignment="Left" Margin="20,388,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
-        <ComboBoxItem Content="Select System Package "/>
+        <ComboBoxItem Content="Select System App "/>
         <ComboBoxItem Content="Windows Terminal"/>
         <ComboBoxItem Content="Everything"/>
         <ComboBoxItem Content="WizTree"/>
@@ -244,6 +244,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Intel Driver Assistant"/>
     </ComboBox>
     <ComboBox Name="cbxCloudStorageApps" HorizontalAlignment="Left" Margin="20,418,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
+        <ComboBoxItem Content="Select Cloud App"/>
         <ComboBoxItem Content="OneDrive "/>
         <ComboBoxItem Content="GoogleDrive"/>
         <ComboBoxItem Content="DropBox"/>
@@ -484,6 +485,27 @@ $InstNotification = "Installing" + $sysAppPackage.PackageName
 #Set-ExecutionPolicy Bypass -Scope Process -Force;
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
 #write-host $orig -ForegroundColor Yellow
+$MainForm.Add_Loaded({
+    DisableInteraction
+})
+$timer = New-Object System.Windows.Forms.Timer
+
+$timer_Tick = {
+
+    $lblCurTime.Content = "$([string]::Format("{0:d2}:{1:d2}:{2:d2}",$((Get-Date).Hour),$((Get-Date).Minute),$((Get-Date).Second)))"
+}
+$timer.Enabled = $True
+$timer.Interval = 1
+$timer.add_Tick($timer_Tick)
+
+$global:PackageArray = $null
+$global:packageMgr = $null
+$global:CommandInstall = $null
+$sysAppPackage = $null
+#$MainForm.Topmost = $True
+$WingetWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/WingetPackages.config')) }
+$ChocoWebList = Invoke-Command { Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/brsvppv/WinSettingsManager/main/ChocoPackages.config')) }
+$InstNotification = "Installing" + $sysAppPackage.PackageName
 Function WaitForKey {
     Write-Host "Press any key to continue..."
     [Console]::ReadKey($true) | Out-Null 
@@ -1641,7 +1663,148 @@ function AddRunAsDifferentUserInContextMenu {
     }
     Write-Host "Finished" -ForegroundColor Magenta
 }
-
+function DisableInteraction {
+    $btnViewList.IsEnabled = $true
+    $btnBrowserInstall.IsEnabled = $false
+    $btnPdfInstall.IsEnabled = $false
+    $btnChatInstall.IsEnabled = $false
+    $btnTextEditorInstall.IsEnabled = $false
+    $btnImageInstall.IsEnabled = $false
+    $btnDevToolsInstall.IsEnabled = $false
+    $btnArhiveAppInstall.IsEnabled = $false
+    $btnFtpAppInstall.IsEnabled = $false
+    $btnVideoInstall.IsEnabled = $false
+    $btnPassMgrInstall.IsEnabled = $false
+    $btnVpnInstall.IsEnabled = $false
+    $btnSysInstalls.IsEnabled = $false
+    $btnCloudStorageApps.IsEnabled = $false
+    #COMBOXS
+    $cbxBrowsers.IsEnabled = $false
+    $cbxPDFReaders.IsEnabled = $false
+    $cbxChatApps.IsEnabled = $false
+    $cbxEditorApps.IsEnabled = $false
+    $cbxImageViwers.IsEnabled = $false
+    $cbxDevTools.IsEnabled = $false
+    $cbxArchiveApps.IsEnabled = $false
+    $cbxFtpApps.IsEnabled = $false
+    $cbxVideoApps.IsEnabled = $false
+    $cbxPassMgr.IsEnabled = $false
+    $cbxVPN.IsEnabled = $false
+    $cbxSelectSystemApps.IsEnabled = $false
+    $cbxCloudStorageApps.IsEnabled = $false
+    
+}
+function EnableInteraction {
+    $btnViewList.IsEnabled = $true
+    $btnBrowserInstall.IsEnabled = $true
+    $btnPdfInstall.IsEnabled = $true
+    $btnChatInstall.IsEnabled = $true
+    $btnTextEditorInstall.IsEnabled = $true
+    $btnImageInstall.IsEnabled = $true
+    $btnDevToolsInstall.IsEnabled = $true
+    $btnArhiveAppInstall.IsEnabled = $true
+    $btnFtpAppInstall.IsEnabled = $true
+    $btnVideoInstall.IsEnabled = $true
+    $btnPassMgrInstall.IsEnabled = $true
+    $btnVpnInstall.IsEnabled = $true
+    $btnSysInstalls.IsEnabled = $true
+    $btnCloudStorageApps.IsEnabled = $true
+    #COMBOXES
+    $cbxPackageManager.IsEnabled = $true
+    $cbxBrowsers.IsEnabled = $true
+    $cbxPDFReaders.IsEnabled = $true
+    $cbxChatApps.IsEnabled = $true
+    $cbxEditorApps.IsEnabled = $true
+    $cbxImageViwers.IsEnabled = $true
+    $cbxDevTools.IsEnabled = $true
+    $cbxArchiveApps.IsEnabled = $true
+    $cbxFtpApps.IsEnabled = $true
+    $cbxVideoApps.IsEnabled = $true
+    $cbxPassMgr.IsEnabled = $true
+    $cbxVPN.IsEnabled = $true
+    $cbxSelectSystemApps.IsEnabled = $true
+    $cbxCloudStorageApps.IsEnabled = $true
+}
+#SELECT PACKAGE MANAGER
+$cbxPackageManager.Add_SelectionChanged( {
+    if ($cbxPackageManager.SelectedIndex -eq 1) {          
+        $global:packageMgr = "winget"
+        $InstCMD = 'install -e --id'
+        $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+        Start-Sleep -Seconds 1
+        $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
+            [pscustomobject]@{
+                PackageName = $WingetPackage
+            }
+        }
+        $checkWinget = (Invoke-Expression "winget -v")
+        if (-not($checkWinget)) {
+            try {
+                Write-host "Downloading Winget Package"
+                $WebSource = 'https://aka.ms/getwinget'
+                $LocalDestination = "$env:TEMP\WingetInstaller\"
+                $AppPackage = 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle'
+                If (!(test-path $LocalDestination)) { New-Item -ItemType Directory -Force -Path $LocalDestination } 
+                Start-BitsTransfer -Source "$WebSource" -Destination "$LocalDestination\$AppPackage" -TransferType Download -Verbose
+                Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
+                #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 
+                Start-Sleep -Milliseconds 100
+                Write-Host "Winget Package Manager has been Installed" -ForegroundColor Green
+            }
+            catch {
+                Write-host "ERROR OCCURED $_"
+        
+            }
+            Finally {
+        
+                Remove-Item $LocalDestination -Recurse -Force -ErrorAction SilentlyContinue -Verbose
+                EnableInteraction
+            }
+        }
+        else {      
+            Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
+        }     
+        Start-Sleep -Seconds 1
+        #itemm missing pakcages from Choco
+        $cbxVPN.Items.Add('Hamachi')
+        $cbxVPN.Items.Add('Global VPN Client')  
+        
+        EnableInteraction
+    }
+    elseif ($cbxPackageManager.SelectedIndex -eq 2) {
+        $global:packageMgr = "choco"
+        $InstCMD = 'install'
+        $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+        $PackageArray = foreach ($ChockPackage in $ChocoWebList ) {
+            [pscustomobject]@{
+                PackageName = $ChockPackage
+            }
+        }
+        $checkChoco = (Invoke-Expression "choco -v")
+        if (-not($checkChoco)) {
+            Start-Sleep -Seconds "1"
+            Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
+        }   
+        else {   
+            Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
+        }
+        Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
+        Start-Sleep -Seconds "1"
+        $cbxVPN.Items.Remove('Hamachi')
+        $cbxVPN.Items.Remove('Global VPN Client')
+        
+        EnableInteraction
+    }
+    else {
+        $btnViewList.IsEnabled = $false
+        DisableInteraction
+    }
+    $global:packageMgr = $packageMgr
+    $global:PackageArray = $PackageArray
+    $global:CommandInstall = $global:CommandInstall
+    return $packageArray
+})
 ########################## BUTTONS ####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
@@ -1708,83 +1871,6 @@ Title="SystemSettings" Height="480" Width="250" ResizeMode="NoResize" WindowStar
             ) }
         $Settings.ShowDialog() | out-null
         #$Settings.Add_Closing({ })
-    })
-#SELECT PACKAGE MANAGER
-$cbxPackageManager.Add_SelectionChanged( {
-        if ($cbxPackageManager.SelectedIndex -eq 1) {          
-            $global:packageMgr = "winget"
-            $InstCMD = 'install -e --id'
-            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-            Start-Sleep -Seconds 1
-            $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
-                [pscustomobject]@{
-                    PackageName = $WingetPackage
-                }
-            }
-            $checkWinget = (Invoke-Expression "winget -v")
-            if (-not($checkWinget)) {
-                try {
-                    Write-host "Downloading Winget Package"
-                    $WebSource = 'https://aka.ms/getwinget'
-                    $LocalDestination = "$env:TEMP\WingetInstaller\"
-                    $AppPackage = 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle'
-                    If (!(test-path $LocalDestination)) { New-Item -ItemType Directory -Force -Path $LocalDestination } 
-                    Start-BitsTransfer -Source "$WebSource" -Destination "$LocalDestination\$AppPackage" -TransferType Download -Verbose
-                    Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
-                    #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 
-                    Start-Sleep -Milliseconds 100
-                    Write-Host "Winget Package Manager has been Installed" -ForegroundColor Green
-                }
-                catch {
-                    Write-host "ERROR OCCURED $_"
-            
-                }
-                Finally {
-            
-                    Remove-Item $LocalDestination -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-            
-                }
-            }
-            else {      
-                Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
-            }     
-            Start-Sleep -Seconds 1
-            #itemm missing pakcages from Choco
-            $cbxVPN.Items.Add('Hamachi')
-            $cbxVPN.Items.Add('Global VPN Client')  
-            $btnViewList.IsEnabled = $true
-        }
-        elseif ($cbxPackageManager.SelectedIndex -eq 2) {
-            $global:packageMgr = "choco"
-            $InstCMD = 'install'
-            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-            $PackageArray = foreach ($ChockPackage in $ChocoWebList ) {
-                [pscustomobject]@{
-                    PackageName = $ChockPackage
-                }
-            }
-            $checkChoco = (Invoke-Expression "choco -v")
-            if (-not($checkChoco)) {
-                Start-Sleep -Seconds "1"
-                Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
-                Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
-            }   
-            else {   
-                Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
-            }
-            Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
-            Start-Sleep -Seconds "1"
-            $cbxVPN.Items.Remove('Hamachi')
-            $cbxVPN.Items.Remove('Global VPN Client')
-            $btnViewList.IsEnabled = $true
-        }
-        else {
-            $btnViewList.IsEnabled = $false
-        }
-        $global:packageMgr = $packageMgr
-        $global:PackageArray = $PackageArray
-        $global:CommandInstall = $global:CommandInstall
-        return $packageArray
     })
 #VIEW PACKAGE LIST
 $btnViewList.Add_Click({
