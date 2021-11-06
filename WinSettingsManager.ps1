@@ -1826,7 +1826,7 @@ Title="SystemSettings" Height="480" Width="250" ResizeMode="NoResize" WindowStar
 <Button Name="btnPerfAction18" Content="18" HorizontalAlignment="Left" Margin="20,208,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 <Button Name="btnPerfAction19" Content="19" HorizontalAlignment="Left" Margin="20,239,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 <Button Name="btnPerfAction20" Content="20" HorizontalAlignment="Left" Margin="20,268,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-<Button Name="btnPerfAction21" Content="21" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+<Button Name="btnComponentsCleanup" Content="ComponentClean" HorizontalAlignment="Left" Margin="20,298,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 <Button Name="btnCheckHealth" Content="CheckHealth" HorizontalAlignment="Left" Margin="20,327,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 <Button Name="btnScanHealth" Content="ScanHealth" HorizontalAlignment="Left" Margin="20,357,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
 <Button Name="btnRestoreHealth" Content="RestoreHealth" HorizontalAlignment="Left" Margin="20,387,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
@@ -1864,8 +1864,11 @@ Title="SystemSettings" Height="480" Width="250" ResizeMode="NoResize" WindowStar
                 DISM /Online /Cleanup-Image /CheckHealth | Out-host
             ) }
         $btnRestoreHealth.Add_Click{ (
-                DISM /Online /Cleanup-Image /RestoreHealth | Out-host
+                DISM /Online /Cleanup-Image /RestoreHealth 
             ) }
+        $btnComponentsCleanup.Add_Click({
+                DISM /online /Cleanup-Image /StartComponentCleanup | Out-Host
+        })
         $btnSfcScan.Add_Click{ (
                 sfc.exe /scannow | Out-host
             ) }
