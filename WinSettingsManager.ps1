@@ -495,6 +495,7 @@ $timer_Tick = {
     $lblCurTime.Content = "$([string]::Format("{0:d2}:{1:d2}:{2:d2}",$((Get-Date).Hour),$((Get-Date).Minute),$((Get-Date).Second)))"
 }
 $timer.Enabled = $True
+
 $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 
