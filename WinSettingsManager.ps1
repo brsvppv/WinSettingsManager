@@ -242,6 +242,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="GnuPG Encryption"/>
         <ComboBoxItem Content="Lenovo System Update"/>
         <ComboBoxItem Content="Intel Driver Assistant"/>
+        <ComboBoxItem Content="PowerToys"/>
     </ComboBox>
     <ComboBox Name="cbxCloudStorageApps" HorizontalAlignment="Left" Margin="20,418,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select Cloud App"/>
@@ -2796,6 +2797,9 @@ $btnSysInstalls.Add_Click( {
         }
         if ($cbxSelectSystemApps.Text -eq "XMind") {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*xmind*" }
+        }
+        if ($cbxSelectSystemApps.Text -eq "PowerToys") {
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*PowerToys*" }
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
