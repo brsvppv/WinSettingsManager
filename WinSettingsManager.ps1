@@ -155,6 +155,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Opera Browser"/>
         <ComboBoxItem Content="Mozilla Firefox"/>
         <ComboBoxItem Content="Tor Browser"/>
+        <ComboBoxItem Content="Microsoft Edge"/>
     </ComboBox>
     <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select PDF Reader"/>
@@ -496,6 +497,7 @@ $timer_Tick = {
     $lblCurTime.Content = "$([string]::Format("{0:d2}:{1:d2}:{2:d2}",$((Get-Date).Hour),$((Get-Date).Minute),$((Get-Date).Second)))"
 }
 $timer.Enabled = $True
+
 $timer.Interval = 1
 $timer.add_Tick($timer_Tick)
 
@@ -2293,6 +2295,11 @@ $btnBrowserInstall.Add_Click( {
         if ($cbxBrowsers.Text -eq " Tor Browser") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*tor*" }
+        }
+        if ($cbxBrowsers.Text -eq "Microsoft Edge") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Edge*" }
+
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
