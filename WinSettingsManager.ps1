@@ -490,16 +490,16 @@ $InstNotification = "Installing" + $sysAppPackage.PackageName
 $MainForm.Add_Loaded({
     DisableInteraction
 })
-$timer = New-Object System.Windows.Forms.Timer
+# $timer = New-Object System.Windows.Forms.Timer
 
-$timer_Tick = {
+# $timer_Tick = {
 
-    $lblCurTime.Content = "$([string]::Format("{0:d2}:{1:d2}:{2:d2}",$((Get-Date).Hour),$((Get-Date).Minute),$((Get-Date).Second)))"
-}
-$timer.Enabled = $True
+#     $lblCurTime.Content = "$([string]::Format("{0:d2}:{1:d2}:{2:d2}",$((Get-Date).Hour),$((Get-Date).Minute),$((Get-Date).Second)))"
+# }
+# $timer.Enabled = $True
 
-$timer.Interval = 1
-$timer.add_Tick($timer_Tick)
+# $timer.Interval = 1
+# $timer.add_Tick($timer_Tick)
 
 $global:PackageArray = $null
 $global:packageMgr = $null
