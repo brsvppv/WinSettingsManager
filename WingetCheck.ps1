@@ -1,6 +1,8 @@
 ﻿$checkWinget = (Invoke-Expression "winget -v" | Out-Null )
 if (-not($checkWinget)) {
     try {
+        #https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx
+        #Add-AppxPackage C:\Users\adminbrsv\Downloads\Microsoft.VCLibs.x64.14.00.Desktop.appx
 		Write-host "Downloading Winget Package"
         $WebSource = 'https://aka.ms/getwinget'
         $LocalDestination = "$env:TEMP\WingetInstaller\"
