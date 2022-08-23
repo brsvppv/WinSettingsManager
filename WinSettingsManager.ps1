@@ -191,6 +191,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Visual Studio Code"/>
         <ComboBoxItem Content="PyCharm"/>
         <ComboBoxItem Content="VS 2019 Enterprise"/>
+        <ComboBoxItem Content="VS 2022 Enterprise Preview"/>
         <ComboBoxItem Content="VS 2019 TestAgent"/>
         <ComboBoxItem Content="VS 2019 TestController"/>
         <ComboBoxItem Content="VS 2019 TeamExplorer"/>
@@ -245,6 +246,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Lenovo System Update"/>
         <ComboBoxItem Content="Intel Driver Assistant"/>
         <ComboBoxItem Content="PowerToys"/>
+        <ComboBoxItem Content="FreeCommanderXE"/>
     </ComboBox>
     <ComboBox Name="cbxCloudStorageApps" HorizontalAlignment="Left" Margin="20,418,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select Cloud App"/>
@@ -2513,8 +2515,13 @@ $btnDevToolsInstall.Add_Click( {
         # <ComboBoxItem Content="VS 2019 Enterprise"/>
         if ($cbxDevTools.Text -eq "VS 2019 Enterprise") {
 
-            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*VisualStudio*Enterprise" }
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*VisualStudio*Enterprise*" }
         }
+        if ($cbxDevTools.Text -eq "VS 2022 Enterprise Preview") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*VisualStudio*Enterprise*2022"}
+        }
+        
         # <ComboBoxItem Content="VS 2019 TestAgent"/>
         if ($cbxDevTools.Text -eq "VS 2019 TestAgent") {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*TestAgent*" }
@@ -2813,6 +2820,9 @@ $btnSysInstalls.Add_Click( {
         }
         if ($cbxSelectSystemApps.Text -eq "PowerToys") {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*PowerToys*" }
+        }
+        if ($cbxSelectSystemApps.Text -eq "FreeCommanderXE") {
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*FreeCommanderXE*" }
         }
         if ($sysAppPackage -eq $null) {
             Write-Host "Error: No Packages Selected $_" -ForegroundColor 'RED'
