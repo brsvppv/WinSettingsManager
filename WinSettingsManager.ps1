@@ -2302,7 +2302,7 @@ $btnBrowserInstall.Add_Click( {
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Edge*" }
 
         }
-        if ($cbxBrowsers.Text -eq "Microsoft Edge") {
+        if ($cbxBrowsers.Text -eq "Opera GX") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*GX*" }
 
