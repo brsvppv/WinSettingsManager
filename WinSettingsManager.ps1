@@ -156,6 +156,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
         <ComboBoxItem Content="Mozilla Firefox"/>
         <ComboBoxItem Content="Tor Browser"/>
         <ComboBoxItem Content="Microsoft Edge"/>
+        <ComboBoxItem Content="Opera GX"/>
     </ComboBox>
     <ComboBox Name="cbxPDFReaders" HorizontalAlignment="Left" Margin="20,89,0,0" VerticalAlignment="Top" Height="22" Width="160" SelectedIndex="0">
         <ComboBoxItem Content="Select PDF Reader"/>
@@ -2299,6 +2300,11 @@ $btnBrowserInstall.Add_Click( {
         if ($cbxBrowsers.Text -eq "Microsoft Edge") {
 
             $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*Edge*" }
+
+        }
+        if ($cbxBrowsers.Text -eq "Microsoft Edge") {
+
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*GX*" }
 
         }
         if ($sysAppPackage -eq $null) {
