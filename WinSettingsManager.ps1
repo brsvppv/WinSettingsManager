@@ -441,7 +441,7 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     <Button Name="btnCertImport" Content="ImportCertificates" HorizontalAlignment="Left" Margin="718,58,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnOpenCtrlPnl" Content=" Control Panel" HorizontalAlignment="Left" Margin="718,88,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnOpenSysAdvance" Content="Advance Settings" HorizontalAlignment="Left" Margin="718,118,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-    <Button Name="btnPerformAction4" Content="3" HorizontalAlignment="Left" Margin="718,148,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+    <Button Name="btnAddRMPrgms" Content="Add/Remove" HorizontalAlignment="Left" Margin="718,148,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction5" Content="4" HorizontalAlignment="Left" Margin="718,178,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction6" Content="5" HorizontalAlignment="Left" Margin="718,208,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction7" Content="6" HorizontalAlignment="Left" Margin="718,239,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
@@ -2100,6 +2100,9 @@ $btnOpenCtrlPnl.Add_Click({
 #Open System Advanced Settings
 $btnOpenSysAdvance.Add_Click({
     Invoke-Expression -Command:"cmd.exe /c sysdm.cpl"
+})
+$btnAddRMPrgms.Add_Click({
+    Invoke-Expression -Command:"cmd.exe /c appwiz.cpl"
 })
 # INSTALL .NET 3.5
 $btnInstNet35.Add_Click( {
