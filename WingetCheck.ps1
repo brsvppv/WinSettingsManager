@@ -7,7 +7,7 @@ if (-not($checkWinget)) {
         $WebSource = 'https://aka.ms/getwinget'
         $LocalDestination = "$env:TEMP\WingetInstaller\"
         $AppPackage = 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle'
-        If (!(test-path $LocalDestination)) { New-Item -ItemType Directory -Force -Path $LocalDestination } 
+        If (!(test-path $LocalDestination)) { New-  Item -ItemType Directory -Force -Path $LocalDestination } 
         Start-BitsTransfer -Source "$WebSource" -Destination "$LocalDestination\$AppPackage" -TransferType Download -Verbose
         Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
         #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 

@@ -439,8 +439,8 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
     <Button Name="btnCreateRP" Content="Create Restore Point" HorizontalAlignment="Left" Margin="20,27,0,0" VerticalAlignment="Top" Width="100" Height="20" FontSize="11" FontFamily="Times New Roman"/>
     <Button Name="btnSystemSettings" Content="System Settings  " HorizontalAlignment="Left" Margin="121,27,0,0" VerticalAlignment="Top" Width="80" Height="20" FontSize="11" FontFamily="Times New Roman"/>
     <Button Name="btnCertImport" Content="ImportCertificates" HorizontalAlignment="Left" Margin="718,58,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-    <Button Name="BTN1" Content="1" HorizontalAlignment="Left" Margin="718,88,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
-    <Button Name="BTN2" Content="2" HorizontalAlignment="Left" Margin="718,118,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+    <Button Name="btnOpenCtrlPnl" Content=" Control Panel" HorizontalAlignment="Left" Margin="718,88,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
+    <Button Name="btnOpenSysAdvance" Content="Advance Settings" HorizontalAlignment="Left" Margin="718,118,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction4" Content="3" HorizontalAlignment="Left" Margin="718,148,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction5" Content="4" HorizontalAlignment="Left" Margin="718,178,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
     <Button Name="btnPerformAction6" Content="5" HorizontalAlignment="Left" Margin="718,208,0,0" VerticalAlignment="Top" Width="100" Height="22"/>
@@ -2093,6 +2093,14 @@ $btnAdvertisingID.Add_Click( {
 $btnCertImport.Add_Click( {
         ImportCertFromDir
     })
+#Open Legacy Control Panel
+$btnOpenCtrlPnl.Add_Click({
+    Invoke-Expression -Command:"cmd.exe /c control"
+    })
+#Open System Advanced Settings
+$btnOpenSysAdvance.Add_Click({
+    Invoke-Expression -Command:"cmd.exe /c sysdm.cpl"
+})
 # INSTALL .NET 3.5
 $btnInstNet35.Add_Click( {
         try {
