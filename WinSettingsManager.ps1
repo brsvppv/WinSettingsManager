@@ -491,8 +491,8 @@ $InstNotification = "Installing" + $sysAppPackage.PackageName
 ##$orig = [Net.ServicePointManager]::SecurityProtocol
 #write-host $orig -ForegroundColor Yellow
 $MainForm.Add_Loaded({
-    DisableInteraction
-})
+        DisableInteraction
+    })
 # $timer = New-Object System.Windows.Forms.Timer
 
 # $timer_Tick = {
@@ -1222,44 +1222,69 @@ Function DoSpeak {
     $object.Speak($Text)
     [System.Console]::Beep(1111, 333)
 }
-Function CheckWinget {
-    $checkWinget = (Invoke-Expression "winget -v")
-    if (-not($checkWinget)) {
-        Start-Sleep -Seconds 1
-        Write-Host "winget is not found, installing it right now." -ForegroundColor 'Magenta'
-        $asset = Invoke-RestMethod -Method Get -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest' | ForEach-Object assets | Where-Object name -like "*.msixbundle"
-        $output = $PSScriptRoot + "\winget-latest.appxbundle"
-        Write-Host "Downloading winget..."
-        Write-Host "Please Wait." -ForegroundColor "Green"
-        Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $output | Write-Verbose
-        Start-Sleep -Seconds 1
-        Write-Host "Installing Winget Package"
-        Write-host "Finilizing" -ForegroundColor "Green"
-        Add-AppxPackage -Path $output  | Write-Verbose
-            
-        Write-Host "Cleanup..."
-        if (Test-Path -Path $output) {
-            Remove-Item $output -Force -ErrorAction SilentlyContinue -Verbose
-        }
+function CheckWinget {
+    # Check if winget is already installed
+    $wingetVersion = (Invoke-Expression "winget -v" -ErrorAction SilentlyContinue)
+    if ($wingetVersion) {
+        Write-Host "Winget Version $wingetVersion is already installed" -ForegroundColor Green
+        return
     }
-    else {      
-        Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
+
+    # Retrieve latest release information from GitHub API
+    $latestRelease = Invoke-RestMethod -Uri 'https://api.github.com/repos/microsoft/winget-cli/releases/latest'
+
+    # Extract download URL for the latest release MSIX bundle
+    $downloadUrl = ($latestRelease.assets | Where-Object { $_.name -like "*.msixbundle" }).browser_download_url
+
+    # Define output path for downloaded MSIX bundle
+    $outputPath = "$env:TEMP\winget-latest.msixbundle"
+
+    # Download winget MSIX bundle
+    Write-Host "Downloading winget..."
+    try {
+        Invoke-WebRequest -Uri $downloadUrl -OutFile $outputPath -ErrorAction Stop
+        Write-Host "Download completed successfully." -ForegroundColor Green
     }
-        
+    catch {
+        Write-Host "Failed to download winget: $_" -ForegroundColor Red
+        return
+    }
+
+    # Install winget MSIX bundle
+    Write-Host "Installing Winget Package..."
+    try {
+        Add-AppxPackage -Path $outputPath -ErrorAction Stop
+        Write-Host "Winget installed successfully." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Failed to install winget: $_" -ForegroundColor Red
+        return
+    }
+
+    # Cleanup downloaded MSIX bundle
+    Write-Host "Cleaning up..."
+    Remove-Item $outputPath -ErrorAction SilentlyContinue
 }
 function CheckChoco {
-    $checkChoco = (Invoke-Expression "choco -v")
-    if (-not($checkChoco)) {
-        Start-Sleep -Seconds "1"
-        Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
-        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
+    try {
+        $chocoVersion = (Invoke-Expression "choco -v" -ErrorAction Stop)
+        Write-Host "Chocolatey Version $chocoVersion is already installed." -ForegroundColor Green
     }
-    else {
-          
-        Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
+    catch {
+        if ($_.Exception.Message -like '*not recognized*') {
+            Write-Host "Chocolatey is not installed. Installing now..." -ForegroundColor Cyan
+            # Your installation logic goes here
+            Set-ExecutionPolicy Bypass -Scope Process -Force; 
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; 
+            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        }
+        else {
+            Write-Host "Error occurred: $($_.Exception.Message)" -ForegroundColor Red
+            [System.Windows.MessageBox]::Show("Error Occurred: $($_.Exception.Message)", 'Error', 'OK', 'Error')
+        }
     }
 }
-Function setBGRegion {
+Function SetBGRegion {
     Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name EnableLUA -Value 0 -Verbose
     Set-Culture bg-BG -Verbose
     Set-TimeZone -Name "FLE Standard Time" -Verbose
@@ -1733,84 +1758,84 @@ function EnableInteraction {
 }
 #SELECT PACKAGE MANAGER
 $cbxPackageManager.Add_SelectionChanged( {
-    if ($cbxPackageManager.SelectedIndex -eq 1) {          
-        $global:packageMgr = "winget"
-        $InstCMD = 'install -e --id'
-        $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-        Start-Sleep -Seconds 1
-        $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
-            [pscustomobject]@{
-                PackageName = $WingetPackage
+        if ($cbxPackageManager.SelectedIndex -eq 1) {          
+            $global:packageMgr = "winget"
+            $InstCMD = 'install -e --id'
+            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+            Start-Sleep -Seconds 1
+            $PackageArray = foreach ($WingetPackage in $WingetWebList ) {
+                [pscustomobject]@{
+                    PackageName = $WingetPackage
+                }
             }
-        }
-        $checkWinget = (Invoke-Expression "winget -v")
-        if (-not($checkWinget)) {
-            try {
-                Write-host "Downloading Winget Package"
-                $WebSource = 'https://aka.ms/getwinget'
-                $LocalDestination = "$env:TEMP\WingetInstaller\"
-                $AppPackage = 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle'
-                If (!(test-path $LocalDestination)) { New-Item -ItemType Directory -Force -Path $LocalDestination } 
-                Start-BitsTransfer -Source "$WebSource" -Destination "$LocalDestination\$AppPackage" -TransferType Download -Verbose
-                Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
-                #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 
-                Start-Sleep -Milliseconds 100
-                Write-Host "Winget Package Manager has been Installed" -ForegroundColor Green
-            }
-            catch {
-                Write-host "ERROR OCCURED $_"
+            $checkWinget = (Invoke-Expression "winget -v")
+            if (-not($checkWinget)) {
+                try {
+                    Write-host "Downloading Winget Package"
+                    $WebSource = 'https://aka.ms/getwinget'
+                    $LocalDestination = "$env:TEMP\WingetInstaller\"
+                    $AppPackage = 'Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle'
+                    If (!(test-path $LocalDestination)) { New-Item -ItemType Directory -Force -Path $LocalDestination } 
+                    Start-BitsTransfer -Source "$WebSource" -Destination "$LocalDestination\$AppPackage" -TransferType Download -Verbose
+                    Add-AppxPackage $LocalDestination\$AppPackage -ErrorAction STOP -Verbose
+                    #Start-Process $LocalDestination\$AppPackage -ArgumentList /q 
+                    Start-Sleep -Milliseconds 100
+                    Write-Host "Winget Package Manager has been Installed" -ForegroundColor Green
+                }
+                catch {
+                    Write-host "ERROR OCCURED $_"
         
-            }
-            Finally {
+                }
+                Finally {
         
-                Remove-Item $LocalDestination -Recurse -Force -ErrorAction SilentlyContinue -Verbose
-                EnableInteraction
+                    Remove-Item $LocalDestination -Recurse -Force -ErrorAction SilentlyContinue -Verbose
+                    EnableInteraction
+                }
             }
-        }
-        else {      
-            Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
-        }     
-        Start-Sleep -Seconds 1
-        #itemm missing pakcages from Choco
-        $cbxVPN.Items.Add('Hamachi')
-        $cbxVPN.Items.Add('Global VPN Client')  
+            else {      
+                Write-Host "Winget Version $checkWinget is already installed" -ForegroundColor 'Green'
+            }     
+            Start-Sleep -Seconds 1
+            #itemm missing pakcages from Choco
+            $cbxVPN.Items.Add('Hamachi')
+            $cbxVPN.Items.Add('Global VPN Client')  
         
-        EnableInteraction
-    }
-    elseif ($cbxPackageManager.SelectedIndex -eq 2) {
-        $global:packageMgr = "choco"
-        $InstCMD = 'install'
-        $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
-        $PackageArray = foreach ($ChockPackage in $ChocoWebList ) {
-            [pscustomobject]@{
-                PackageName = $ChockPackage
-            }
+            EnableInteraction
         }
-        $checkChoco = (Invoke-Expression "choco -v")
-        if (-not($checkChoco)) {
+        elseif ($cbxPackageManager.SelectedIndex -eq 2) {
+            $global:packageMgr = "choco"
+            $InstCMD = 'install'
+            $global:CommandInstall = $global:packageMgr + " " + $InstCMD + " "
+            $PackageArray = foreach ($ChockPackage in $ChocoWebList ) {
+                [pscustomobject]@{
+                    PackageName = $ChockPackage
+                }
+            }
+            $checkChoco = (Invoke-Expression "choco -v")
+            if (-not($checkChoco)) {
+                Start-Sleep -Seconds "1"
+                Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
+                Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
+            }   
+            else {   
+                Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
+            }
+            Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
             Start-Sleep -Seconds "1"
-            Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Magenta'
-            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))  | Write-Verbose
-        }   
-        else {   
-            Write-Host "Chocolyte Version $checkChoco is already installed" -ForegroundColor 'Green'
-        }
-        Invoke-Expression 'choco feature enable -n allowGlobalConfirmation'
-        Start-Sleep -Seconds "1"
-        $cbxVPN.Items.Remove('Hamachi')
-        $cbxVPN.Items.Remove('Global VPN Client')
+            $cbxVPN.Items.Remove('Hamachi')
+            $cbxVPN.Items.Remove('Global VPN Client')
         
-        EnableInteraction
-    }
-    else {
-        $btnViewList.IsEnabled = $false
-        DisableInteraction
-    }
-    $global:packageMgr = $packageMgr
-    $global:PackageArray = $PackageArray
-    $global:CommandInstall = $global:CommandInstall
-    return $packageArray
-})
+            EnableInteraction
+        }
+        else {
+            $btnViewList.IsEnabled = $false
+            DisableInteraction
+        }
+        $global:packageMgr = $packageMgr
+        $global:PackageArray = $PackageArray
+        $global:CommandInstall = $global:CommandInstall
+        return $packageArray
+    })
 ########################## BUTTONS ####################
 $btnSystemSettings.Add_Click( {
         #$MainForm.Hide()
@@ -1874,7 +1899,7 @@ Title="SystemSettings" Height="480" Width="250" ResizeMode="NoResize" WindowStar
             ) }
         $btnComponentsCleanup.Add_Click({
                 DISM /online /Cleanup-Image /StartComponentCleanup | Out-Host
-        })
+            })
         $btnSfcScan.Add_Click{ (
                 sfc.exe /scannow | Out-host
             ) }
@@ -2095,15 +2120,15 @@ $btnCertImport.Add_Click( {
     })
 #Open Legacy Control Panel
 $btnOpenCtrlPnl.Add_Click({
-    Invoke-Expression -Command:"cmd.exe /c control"
+        Invoke-Expression -Command:"cmd.exe /c control"
     })
 #Open System Advanced Settings
 $btnOpenSysAdvance.Add_Click({
-    Invoke-Expression -Command:"cmd.exe /c sysdm.cpl"
-})
+        Invoke-Expression -Command:"cmd.exe /c sysdm.cpl"
+    })
 $btnAddRMPrgms.Add_Click({
-    Invoke-Expression -Command:"cmd.exe /c appwiz.cpl"
-})
+        Invoke-Expression -Command:"cmd.exe /c appwiz.cpl"
+    })
 # INSTALL .NET 3.5
 $btnInstNet35.Add_Click( {
         try {
@@ -2530,7 +2555,7 @@ $btnDevToolsInstall.Add_Click( {
         }
         if ($cbxDevTools.Text -eq "VS 2022 Enterprise Preview") {
 
-            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*VisualStudio*Enterprise*2022"}
+            $sysAppPackage = $global:PackageArray |  Where-Object { $_.PackageName -like "*VisualStudio*Enterprise*2022" }
         }
         
         # <ComboBoxItem Content="VS 2019 TestAgent"/>
